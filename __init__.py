@@ -28,6 +28,77 @@ class WsgiOutput(object):
 
     When write is first called by the response, it initiates
     the reponse by invoking the WSGI start_response callable.
+
+    Create a mock implementation of the wsgi write callable
+    >>> from StringIO import StringIO
+    >>> data = StringIO('')
+    >>> def start_response(status, headers):
+    ...     data.write('status and headers.')
+    ...     return data.write
+    ...
+
+    create an instance
+    >>> output = WsgiOutput(start_response)
+
+    Set the response status
+    >>> output.setResponseStatus("200", "OK")
+    >>> output._statusString
+    '200 OK'
+    
+    Set the headers as a mapping
+    >>> output.setResponseHeaders({'a':'b', 'c':'d'})
+
+    They must be returned as a list of tuples
+    >>> output.getHeaders()
+    [('a', 'b'), ('c', 'd')]
+    
+    calling setResponseHeaders again adds new values 
+    >>> output.setResponseHeaders({'x':'y', 'c':'d'})
+    >>> h = output.getHeaders()
+    >>> h.sort()
+    >>> h
+    [('a', 'b'), ('c', 'd'), ('x', 'y')]
+
+    Headers that can potentially repeat are added using
+    appendResponseHeaders
+    >>> output.appendResponseHeaders(['foo: bar'])
+    >>> h = output.getHeaders()
+    >>> h.sort()
+    >>> h    
+    [('a', 'b'), ('c', 'd'), ('foo', ' bar'), ('x', 'y')]
+    >>> output.appendResponseHeaders(['foo: bar'])
+    >>> h = output.getHeaders()
+    >>> h.sort()
+    >>> h    
+    [('a', 'b'), ('c', 'd'), ('foo', ' bar'), ('foo', ' bar'), ('x', 'y')]
+
+    Headers containing a colon should also work
+    >>> output.appendResponseHeaders(['my: brain:hurts'])
+    >>> h = output.getHeaders()
+    >>> h.sort()
+    >>> h    
+    [('a', 'b'), ('c', 'd'), ('foo', ' bar'), \
+('foo', ' bar'), ('my', ' brain:hurts'), ('x', 'y')]
+
+    The headers should not be written to the output
+    >>> output.wroteResponseHeader()
+    False
+    >>> data.getvalue()
+    ''
+    
+    now write something
+    >>> output.write('Now for something')
+
+    The headers should be sent and the data written to the stream
+    >>> output.wroteResponseHeader()
+    True
+    >>> data.getvalue()
+    'status and headers.Now for something'
+
+    calling write again the headers should not be sent again
+    >>> output.write(' completly different!')
+    >>> data.getvalue()
+    'status and headers.Now for something completly different!'
     """
 
     implements(IHeaderOutput)
@@ -56,10 +127,7 @@ class WsgiOutput(object):
 
         Takes a list of strings.
         """
-        accum = self._accumulatedHeaders
-        if accum is None:
-            self._accumulatedHeaders = accum = []
-            accum.extend(lst)
+        self._accumulatedHeaders.extend(lst)
 
     def wroteResponseHeader(self):
         """Returns a flag indicating whether the response
@@ -78,7 +146,9 @@ class WsgiOutput(object):
         to the WSGI spec
         """
         response_headers = self._headers.items()
+
         accum = [ tuple(line.split(':',1)) for line in self._accumulatedHeaders]
+            
         response_headers.extend(accum)
         return response_headers
 
