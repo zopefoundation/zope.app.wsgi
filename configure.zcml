@@ -1,8 +1,0 @@
-<configure xmlns="http://namespaces.zope.org/zope">
-
-  <subscriber
-      for="zope.app.appsetup.IDatabaseOpenedEvent"
-      factory=".bootStrapSubscriber"
-      />
-
-</configure>

@@ -130,16 +130,3 @@ class PublisherApp(object):
         # since the response is written using the WSGI write callable
         # return an empty iterable (see 
         return ""
-
-
-# provides an WSGI application object
-publisherApp = PublisherApp()
-
-def bootStrapSubscriber(event):
-    """subcriber for a database opened event
-    initializes the request factory of the wsgi applicaion object
-    """
-    publisherApp.request_factory = \
-        HTTPPublicationRequestFactory(event.database)
-
-
