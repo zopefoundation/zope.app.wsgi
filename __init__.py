@@ -17,7 +17,7 @@ $Id$
 """
 from zope.interface import implements
 from zope.publisher.publish import publish
-from zope.server.interfaces import IHeaderOutput
+from zope.publisher.interfaces.http import IHeaderOutput
 
 from zope.app.publication.httpfactory import HTTPPublicationRequestFactory
 
