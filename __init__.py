@@ -78,7 +78,7 @@ class WsgiOutput(object):
         to the WSGI spec
         """
         response_headers = self._headers.items()
-        accum = [ tuple(line.split(':')) for line in self._accumulatedHeaders]
+        accum = [ tuple(line.split(':',1)) for line in self._accumulatedHeaders]
         response_headers.extend(accum)
         return response_headers
 
