@@ -16,11 +16,21 @@
 $Id$
 """
 import unittest
-from zope.testing.doctestunit import DocTestSuite
+from zope.testing import doctest
+from zope.app.testing import setup, ztapi, placelesssetup
+
+def setUp(test):
+    placelesssetup.setUp(test)
+
+def tearDown(test):
+    placelesssetup.tearDown(test)
+
 
 def test_suite():
     return unittest.TestSuite((
-        DocTestSuite('zope.app.wsgi'),
+        doctest.DocFileSuite('README.txt',
+                             setUp=setUp, tearDown=tearDown,
+                             optionflags=doctest.NORMALIZE_WHITESPACE),
         ))
 
 if __name__ == '__main__':
