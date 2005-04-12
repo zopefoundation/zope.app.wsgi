@@ -17,19 +17,13 @@ $Id$
 """
 import unittest
 from zope.testing import doctest
-from zope.app.testing import setup, ztapi, placelesssetup
-
-def setUp(test):
-    placelesssetup.setUp(test)
-
-def tearDown(test):
-    placelesssetup.tearDown(test)
-
+from zope.app.testing import placelesssetup
 
 def test_suite():
     return unittest.TestSuite((
         doctest.DocFileSuite('README.txt',
-                             setUp=setUp, tearDown=tearDown,
+                             setUp=placelesssetup.setUp,
+                             tearDown=placelesssetup.tearDown,
                              optionflags=doctest.NORMALIZE_WHITESPACE),
         ))
 

@@ -25,7 +25,7 @@ create and open a ZODB connection:
 We can now initialize the application:
 
   >>> from zope.app import wsgi
-  >>> app = wsgi.PublisherApp(db)
+  >>> app = wsgi.WSGIPublisherApplication(db)
 
 The callable ``app`` object accepts two positional arguments, the environment
 and the function that initializes the response and returns a function with

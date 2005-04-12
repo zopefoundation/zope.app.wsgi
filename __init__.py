@@ -77,7 +77,7 @@ class WSGIOutput(object):
         self.wsgi_write(data)
 
 
-class PublisherApp(object):
+class WSGIPublisherApplication(object):
     """A WSGI application implemenation for the zope publisher
 
     Instances of this class can be used as a WSGI application object.
@@ -104,8 +104,6 @@ class PublisherApp(object):
         request.response.setHeaderOutput(wsgiOutput)
 
         publish(request)
-
-        request.close()
 
         # since the response is written using the WSGI ``write()`` callable
         # return an empty iterable (see PEP 333).
