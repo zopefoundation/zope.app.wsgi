@@ -92,6 +92,9 @@ class WSGIPublisherApplication(object):
         if db is not None:
             self.requestFactory = factory(db)
 
+    def publish(self, request):
+        publish(request)
+
     def __call__(self, environ, start_response):
         """See zope.app.wsgi.interfaces.IWSGIApplication"""
         # wsgiOutput has two purposes: (1) it is the response headers output
@@ -114,3 +117,18 @@ class WSGIPublisherApplication(object):
         # since the response is written using the WSGI ``write()`` callable
         # return an empty iterable (see PEP 333).
         return ""
+
+
+class PMDBWSGIPublisherApplication(WSGIPublisherApplication):
+
+    def publish(self, request):
+        try:
+            publish(request, handle_errors=False)
+        except:
+            import sys, pdb
+            print "%s:" % sys.exc_info()[0]
+            print sys.exc_info()[1]
+            pdb.post_mortem(sys.exc_info()[2])
+            raise
+
+    
