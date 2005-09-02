@@ -42,7 +42,11 @@ class WSGIPublisherApplication(object):
         """See zope.app.wsgi.interfaces.IWSGIApplication"""
         request = self.requestFactory(environ['wsgi.input'], environ)
         response = request.response
-        publish(request)
+
+        # Let's support post-mortem debugging
+        handle_errors = environ.get('wsgi.handleErrors', True)
+
+        publish(request, handle_errors=handle_errors)
 
         # Start the WSGI server response
         start_response(response.getStatusString(), response.getHeaders())
