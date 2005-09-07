@@ -52,4 +52,4 @@ class WSGIPublisherApplication(object):
         start_response(response.getStatusString(), response.getHeaders())
 
         # Return the result body iterable.
-        return response.result.body
+        return response.consumeBodyIter()
