@@ -62,6 +62,7 @@ class WSGIPublisherApplication(object):
 
 
 def getWSGIApplication(configfile, schemafile=None,
+                       features=(),
                        requestFactory=HTTPPublicationRequestFactory):
     # Load the configuration schema
     if schemafile is None:
@@ -93,7 +94,7 @@ def getWSGIApplication(configfile, schemafile=None,
     options.eventlog()
 
     # Configure the application
-    appsetup.config(options.site_definition)
+    appsetup.config(options.site_definition, features=features)
 
     # Connect to and open the database
     # XXX: Handle multiple databases.
