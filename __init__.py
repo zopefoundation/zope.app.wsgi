@@ -97,8 +97,7 @@ def getWSGIApplication(configfile, schemafile=None,
     appsetup.config(options.site_definition, features=features)
 
     # Connect to and open the database
-    # XXX: Handle multiple databases.
-    db = options.database.open()
+    db = appsetup.multi_database(options.databases)[0][0]
 
     # Send out an event that the database has been opened
     notify(appsetup.interfaces.DatabaseOpened(db))
