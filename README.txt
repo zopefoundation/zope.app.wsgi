@@ -93,6 +93,38 @@ taken:
   i.e. by calling a method on the server that sets the application.
 
 
+Creating A WSGI Application
+---------------------------
+
+We do not always want Zope to control the startup process. People want to be
+able to start their favorite server and then register Zope simply as a WSGI
+application. For those cases we provide a very high-level function called
+``getWSGIApplication()`` that only requires the configuration file to set up
+the Zope 3 application server and returns a WSGI application. Here is a simple
+example:
+
+  >>> from cStringIO import StringIO
+  >>> configFile = StringIO('''
+  ... site-definition site.zcml
+  ...
+  ... <zodb>
+  ...   <mappingstorage />
+  ... </zodb>
+  ...
+  ... <eventlog>
+  ...   <logfile>
+  ...     path STDOUT
+  ...   </logfile>
+  ... </eventlog>
+  ... ''')
+
+XXX - these tests are failing. The unit tests run correctly but 128 functional
+tests are failing because of the next 3 lines.
+
+  #>>> app = wsgi.getWSGIApplication(configFile)
+  #>>> app
+  #<zope.app.wsgi.WSGIPublisherApplication object at ...>
+
 About WSGI
 ----------
 

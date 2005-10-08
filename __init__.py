@@ -15,10 +15,16 @@
 
 $Id$
 """
+import os
+import sys
+import ZConfig
+
+from zope.event import notify
 from zope.interface import implements
 from zope.publisher.publish import publish
 from zope.publisher.interfaces.http import IHeaderOutput
 
+from zope.app.appsetup import appsetup
 from zope.app.publication.httpfactory import HTTPPublicationRequestFactory
 from zope.app.wsgi import interfaces
 
@@ -53,3 +59,48 @@ class WSGIPublisherApplication(object):
 
         # Return the result body iterable.
         return response.consumeBodyIter()
+
+
+def getWSGIApplication(configfile, schemafile=None,
+                       features=(),
+                       requestFactory=HTTPPublicationRequestFactory):
+    # Load the configuration schema
+    if schemafile is None:
+        schemafile = os.path.join(
+            os.path.dirname(appsetup.__file__), 'schema.xml')
+
+    # Let's support both, an opened file and path
+    if isinstance(schemafile, basestring):
+        schema = ZConfig.loadSchema(schemafile)
+    else:
+        schema = ZConfig.loadSchemaFile(schemafile)
+
+    # Load the configuration file
+    # Let's support both, an opened file and path
+    try:
+        if isinstance(configfile, basestring):
+            options, handlers = ZConfig.loadConfig(schema, configfile)
+        else:
+            options, handlers = ZConfig.loadConfigFile(schema, configfile)
+    except ZConfig.ConfigurationError, msg:
+        sys.stderr.write("Error: %s\n" % str(msg))
+        sys.exit(2)
+
+    # Insert all specified Python paths
+    if options.path:
+        sys.path[:0] = [os.path.abspath(p) for p in options.path]
+
+    # Setup the event log
+    options.eventlog()
+
+    # Configure the application
+    appsetup.config(options.site_definition, features=features)
+
+    # Connect to and open the database
+    db = appsetup.multi_database(options.databases)[0][0]
+
+    # Send out an event that the database has been opened
+    notify(appsetup.interfaces.DatabaseOpened(db))
+
+    # Create the WSGI application
+    return WSGIPublisherApplication(db, requestFactory)

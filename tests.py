@@ -21,10 +21,11 @@ from zope.app.testing import placelesssetup
 
 def test_suite():
     return unittest.TestSuite((
-        doctest.DocFileSuite('README.txt',
-                             setUp=placelesssetup.setUp,
-                             tearDown=placelesssetup.tearDown,
-                             optionflags=doctest.NORMALIZE_WHITESPACE),
+        doctest.DocFileSuite(
+            'README.txt',
+            setUp=placelesssetup.setUp,
+            tearDown=placelesssetup.tearDown,
+            optionflags=doctest.NORMALIZE_WHITESPACE|doctest.ELLIPSIS),
         ))
 
 if __name__ == '__main__':
