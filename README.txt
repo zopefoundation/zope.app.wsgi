@@ -118,12 +118,9 @@ example:
   ... </eventlog>
   ... ''')
 
-XXX - these tests are failing. The unit tests run correctly but 128 functional
-tests are failing because of the next 3 lines.
-
-  #>>> app = wsgi.getWSGIApplication(configFile)
-  #>>> app
-  #<zope.app.wsgi.WSGIPublisherApplication object at ...>
+  >>> app = wsgi.getWSGIApplication(configFile)
+  >>> app
+  <zope.app.wsgi.WSGIPublisherApplication object at ...>
 
 About WSGI
 ----------
