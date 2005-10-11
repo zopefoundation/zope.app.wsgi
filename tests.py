@@ -18,12 +18,18 @@ $Id$
 import unittest
 from zope.testing import doctest
 from zope.app.testing import placelesssetup
+from zope.app.publication.requestpublicationregistry import factoryRegistry
+from zope.app.publication.requestpublicationfactories import BrowserFactory
+
+def setUp(test):
+    placelesssetup.setUp(test)
+    factoryRegistry.register('GET', '*', 'browser', 0, BrowserFactory())
 
 def test_suite():
     return unittest.TestSuite((
         doctest.DocFileSuite(
             'README.txt',
-            setUp=placelesssetup.setUp,
+            setUp=setUp,
             tearDown=placelesssetup.tearDown,
             optionflags=doctest.NORMALIZE_WHITESPACE|doctest.ELLIPSIS),
         ))
