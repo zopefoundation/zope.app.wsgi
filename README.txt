@@ -103,9 +103,16 @@ application. For those cases we provide a very high-level function called
 the Zope 3 application server and returns a WSGI application. Here is a simple
 example:
 
+  # We have to create our own site definition file -- which will simply be
+  # empty -- to provide a minimal test.
+  >>> import os, tempfile
+  >>> temp_dir = tempfile.mkdtemp()
+  >>> sitezcml = os.path.join(temp_dir, 'site.zcml')
+  >>> open(sitezcml, 'w').write('<configure />')
+
   >>> from cStringIO import StringIO
   >>> configFile = StringIO('''
-  ... site-definition site.zcml
+  ... site-definition %s
   ...
   ... <zodb>
   ...   <mappingstorage />
@@ -116,11 +123,14 @@ example:
   ...     path STDOUT
   ...   </logfile>
   ... </eventlog>
-  ... ''')
+  ... ''' %sitezcml)
 
   >>> app = wsgi.getWSGIApplication(configFile)
   >>> app
   <zope.app.wsgi.WSGIPublisherApplication object at ...>
+
+  >>> import shutil
+  >>> shutil.rmtree(temp_dir)
 
 About WSGI
 ----------
