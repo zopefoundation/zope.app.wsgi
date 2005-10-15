@@ -93,6 +93,10 @@ def getWSGIApplication(configfile, schemafile=None,
     # Setup the event log
     options.eventlog()
 
+    # Insert the devmode feature, if turned on
+    if options.devmode:
+        features += ('devmode',)
+
     # Configure the application
     appsetup.config(options.site_definition, features=features)
 
