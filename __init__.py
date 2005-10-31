@@ -61,6 +61,29 @@ class WSGIPublisherApplication(object):
         return response.consumeBodyIter()
 
 
+class PMDBWSGIPublisherApplication(WSGIPublisherApplication):
+
+    def __call__(self, environ, start_response):
+        environ['wsgi.handleErrors'] = False
+
+        # Call the application to handle the request and write a response
+        try:
+            app =  super(PMDBWSGIPublisherApplication, self)
+            return app.__call__(environ, start_response)
+        except Exception, error:
+            import sys, pdb
+            print "%s:" % sys.exc_info()[0]
+            print sys.exc_info()[1]
+            #import zope.security.management
+            #zope.security.management.restoreInteraction()
+            try:
+                pdb.post_mortem(sys.exc_info()[2])
+                raise
+            finally:
+                pass #zope.security.management.endInteraction()
+
+
+
 def getWSGIApplication(configfile, schemafile=None,
                        features=(),
                        requestFactory=HTTPPublicationRequestFactory):
