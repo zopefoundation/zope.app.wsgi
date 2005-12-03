@@ -30,7 +30,7 @@ from zope.app.wsgi import interfaces
 
 
 class WSGIPublisherApplication(object):
-    """A WSGI application implemenation for the zope publisher
+    """A WSGI application implementation for the zope publisher
 
     Instances of this class can be used as a WSGI application object.
 
