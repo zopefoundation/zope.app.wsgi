@@ -65,7 +65,7 @@ nothing bad happens. :)
     ...     checker.NamesChecker(['browserDefault', '__call__']),
     ...     )
 
-    >>> from zope.testbrowser import Browser
+    >>> from zope.testbrowser.testing import Browser
     >>> browser = Browser()
     >>> browser.handleErrors = False
     >>> browser.open('http://localhost/@@test-file-view.html')
