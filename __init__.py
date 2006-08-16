@@ -18,6 +18,7 @@ $Id$
 import os
 import sys
 import ZConfig
+import logging
 
 from zope.event import notify
 from zope.interface import implements
@@ -119,6 +120,9 @@ def getWSGIApplication(configfile, schemafile=None,
     # Insert the devmode feature, if turned on
     if options.devmode:
         features += ('devmode',)
+        logging.warning("Developer mode is enabled: this is a security risk "
+            "and should NOT be enabled on production servers. Developer mode "
+            "can be turned off in etc/zope.conf")
 
     # Configure the application
     appsetup.config(options.site_definition, features=features)
