@@ -26,6 +26,7 @@ import zope.publisher.interfaces.browser
 from zope.app.testing import placelesssetup
 from zope.app.publication.requestpublicationregistry import factoryRegistry
 from zope.app.publication.requestpublicationfactories import BrowserFactory
+from zope.app.wsgi.testing import AppWSGILayer
 
 def setUp(test):
     placelesssetup.setUp(test)
@@ -97,7 +98,7 @@ Clean up:
 def test_suite():
 
     functional_suite = doctest.DocTestSuite()
-    functional_suite.layer = zope.app.testing.functional.Functional
+    functional_suite.layer = AppWSGILayer
 
     return unittest.TestSuite((
         functional_suite,
