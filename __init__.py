@@ -23,7 +23,6 @@ import logging
 from zope.event import notify
 from zope.interface import implements
 from zope.publisher.publish import publish
-from zope.publisher.interfaces.http import IHeaderOutput
 
 from zope.app.appsetup import appsetup
 from zope.app.publication.httpfactory import HTTPPublicationRequestFactory

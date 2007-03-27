@@ -21,7 +21,6 @@ import unittest
 from zope import component, interface
 from zope.testing import doctest
 
-import zope.app.testing.functional
 import zope.publisher.interfaces.browser
 from zope.app.testing import placelesssetup
 from zope.app.publication.requestpublicationregistry import factoryRegistry
