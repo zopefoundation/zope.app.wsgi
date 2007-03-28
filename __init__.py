@@ -90,7 +90,7 @@ def getWSGIApplication(configfile, schemafile=None,
     # Load the configuration schema
     if schemafile is None:
         schemafile = os.path.join(
-            os.path.dirname(appsetup.__file__), 'schema.xml')
+            os.path.dirname(appsetup.__file__), 'schema', 'schema.xml')
 
     # Let's support both, an opened file and path
     if isinstance(schemafile, basestring):
