@@ -23,6 +23,7 @@ from setuptools import setup, find_packages, Extension
 setup(name='zope.app.wsgi',
       version='3.4dev',
       url='http://svn.zope.org/zope.app.wsgi',
+      dependency_links=['http://download.zope.org/distribution/',],
       license='ZPL 2.1',
       description='Zope wsgi',
       author='Zope Corporation and Contributors',
