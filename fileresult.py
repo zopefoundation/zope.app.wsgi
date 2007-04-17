@@ -20,10 +20,11 @@ import tempfile
 from zope import component, interface
 import zope.publisher.interfaces.http
 import zope.publisher.http
-from zope.publisher.http import DirectResult
+from zope.publisher.interfaces.http import IResult
 from zope.security.proxy import removeSecurityProxy
 
 class FallbackWrapper:
+    interface.implements(IResult)
 
     def __init__(self, f):
         self.close = f.close
@@ -42,19 +43,18 @@ class FallbackWrapper:
 @interface.implementer(zope.publisher.http.IResult)
 def FileResult(f, request):
     f = removeSecurityProxy(f)
-    headers = ()
     if request.response.getHeader('content-length') is None:
         f.seek(0, 2)
         size = f.tell()
         f.seek(0)
-        headers += (('Content-Length', str(size)), )
+        request.response.setHeader('Content-Length', str(size))
         
     wrapper = request.environment.get('wsgi.file_wrapper')
     if wrapper is not None:
         f = wrapper(f)
     else:
         f = FallbackWrapper(f)
-    return DirectResult(f, headers)
+    return f
 
 # We need to provide an adapter for temporary files *if* they are different
 # than regular files. Whether they are is system dependent. Sigh.

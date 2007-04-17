@@ -135,9 +135,9 @@ example:
 About WSGI
 ----------
 
-WSGI is the Python Web Server Gateway Interface, an upcoming PEP to
-standardize the interface between web servers and python applications to
-promote portability.
+WSGI is the Python Web Server Gateway Interface, a PEP to standardize
+the interface between web servers and python applications to promote
+portability.
 
 For more information, refer to the WSGI specification:
 http://www.python.org/peps/pep-0333.html
