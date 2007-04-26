@@ -22,14 +22,18 @@ from zope import component, interface
 from zope.testing import doctest
 
 import zope.publisher.interfaces.browser
-from zope.app.testing import placelesssetup
+from zope.app.testing import placelesssetup, ztapi
 from zope.app.publication.requestpublicationregistry import factoryRegistry
 from zope.app.publication.requestpublicationfactories import BrowserFactory
 from zope.app.wsgi.testing import AppWSGILayer
+from zope.app.security.interfaces import IAuthentication
+from zope.app.security.principalregistry import principalRegistry
+
 
 def setUp(test):
     placelesssetup.setUp(test)
     factoryRegistry.register('GET', '*', 'browser', 0, BrowserFactory())
+    ztapi.provideUtility(IAuthentication, principalRegistry)
 
 
 
