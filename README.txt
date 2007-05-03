@@ -47,8 +47,8 @@ and return ``None`` as the write method.
 Now we can send the fabricated HTTP request to the application for processing:
 
   >>> print ''.join(app(environ, start_response))
-  <html><head><title>Unauthorized</title></head>
-  <body><h2>Unauthorized</h2>
+  <html><head><title>ComponentLookupError</title></head>
+  <body><h2>ComponentLookupError</h2>
   A server error occurred.
   </body></html>
   <BLANKLINE>
