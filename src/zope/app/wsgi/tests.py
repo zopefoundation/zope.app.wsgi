@@ -17,9 +17,11 @@ $Id$
 """
 import tempfile
 import unittest
+import re
 
 from zope import component, interface
 from zope.testing import doctest
+from zope.testing import renormalizing
 
 import zope.publisher.interfaces.browser
 from zope.app.testing import placelesssetup, ztapi
@@ -100,6 +102,10 @@ Clean up:
 
 def test_suite():
 
+    checker = renormalizing.RENormalizing([
+        (re.compile(r"&lt;class 'zope.component.interfaces.ComponentLookupError'&gt;"),
+                    r'ComponentLookupError'),
+    ])
     functional_suite = doctest.DocTestSuite()
     functional_suite.layer = AppWSGILayer
 
@@ -107,7 +113,7 @@ def test_suite():
         functional_suite,
         doctest.DocFileSuite(
             'README.txt', 'fileresult.txt',
-            setUp=setUp,
+            setUp=setUp, checker=checker,
             tearDown=placelesssetup.tearDown,
             optionflags=doctest.NORMALIZE_WHITESPACE|doctest.ELLIPSIS),
         ))
