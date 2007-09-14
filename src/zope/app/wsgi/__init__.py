@@ -83,10 +83,7 @@ class PMDBWSGIPublisherApplication(WSGIPublisherApplication):
                 pass #zope.security.management.endInteraction()
 
 
-
-def getWSGIApplication(configfile, schemafile=None,
-                       features=(),
-                       requestFactory=HTTPPublicationRequestFactory):
+def config(configfile, schemafile=None, features=()):
     # Load the configuration schema
     if schemafile is None:
         schemafile = os.path.join(
@@ -123,14 +120,16 @@ def getWSGIApplication(configfile, schemafile=None,
             "and should NOT be enabled on production servers. Developer mode "
             "can be turned off in etc/zope.conf")
 
-    # Configure the application
+    # Execute the ZCML configuration.
     appsetup.config(options.site_definition, features=features)
 
-    # Connect to and open the database
+    # Connect to and open the database, notify subscribers.
     db = appsetup.multi_database(options.databases)[0][0]
-
-    # Send out an event that the database has been opened
     notify(appsetup.interfaces.DatabaseOpened(db))
 
-    # Create the WSGI application
+    return db
+
+def getWSGIApplication(configfile, schemafile=None, features=(),
+                       requestFactory=HTTPPublicationRequestFactory):
+    db = config(configfile, schemafile, features)
     return WSGIPublisherApplication(db, requestFactory)
