@@ -17,8 +17,8 @@ $Id$
 """
 import os
 import sys
-import ZConfig
 import logging
+import ZConfig
 
 from zope.event import notify
 from zope.interface import implements
