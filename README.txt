@@ -8,8 +8,8 @@ call::
 
 This is especially useful for debugging.
 
-To bring up Zope and obtain the WSGI application object at the same,
-use the ``getWSGIApplication`` function.  Here's an example of a
+To bring up Zope and obtain the WSGI application object at the same
+time, use the ``getWSGIApplication`` function.  Here's an example of a
 factory a la PasteDeploy_::
 
     def application_factory(global_conf):
