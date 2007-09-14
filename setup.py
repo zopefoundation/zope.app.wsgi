@@ -15,16 +15,13 @@
 
 $Id$
 """
-
-import os
-
 from setuptools import setup, find_packages, Extension
 
 setup(name='zope.app.wsgi',
-      version = '3.4.0b1',
-      url='http://svn.zope.org/zope.app.wsgi',
+      version = '3.4.0',
+      url='http://pypi.python.org/pypi/zope.app.wsgi',
       license='ZPL 2.1',
-      description='Zope wsgi',
+      description='WSGI application for the zope.publisher',
       author='Zope Corporation and Contributors',
       author_email='zope3-dev@zope.org',
       packages=find_packages('src'),
@@ -35,6 +32,7 @@ setup(name='zope.app.wsgi',
                                   'zope.app.zcmlfiles',
                                   'zope.testbrowser']),
       install_requires=['setuptools',
+                        'ZConfig',
                         'zope.app.appsetup',
                         'zope.app.publication',
                         'zope.app.wsgi',
