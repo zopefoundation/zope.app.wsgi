@@ -22,6 +22,11 @@ factory a la PasteDeploy_::
 Changes
 =======
 
+3.4.1 (unreleased)
+------------------
+
+* Added Trove classifiers.
+
 3.4.0 (2007-09-14)
 ------------------
 
