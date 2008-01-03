@@ -125,9 +125,26 @@ example:
   ... </eventlog>
   ... ''' %sitezcml)
 
+
+Create an handler for the event.
+
+  >>> import zope.component
+  >>> from zope.app.wsgi.interfaces import IWSGIPublisherApplicationCreatedEvent
+  >>> called = []
+  >>> @zope.component.adapter(IWSGIPublisherApplicationCreatedEvent)
+  ... def handler(event):
+  ...     called.append(event)
+
+  >>> zope.component.provideHandler(handler)
+
+Create an WSGI application.
+
   >>> app = wsgi.getWSGIApplication(configFile)
   >>> app
   <zope.app.wsgi.WSGIPublisherApplication object at ...>
+
+  >>> called[0].application is app
+  True
 
   >>> import shutil
   >>> shutil.rmtree(temp_dir)

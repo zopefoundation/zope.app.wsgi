@@ -132,4 +132,9 @@ def config(configfile, schemafile=None, features=()):
 def getWSGIApplication(configfile, schemafile=None, features=(),
                        requestFactory=HTTPPublicationRequestFactory):
     db = config(configfile, schemafile, features)
-    return WSGIPublisherApplication(db, requestFactory)
+    application = WSGIPublisherApplication(db, requestFactory)
+
+    # Create the application, notify subscribers.
+    notify(interfaces.WSGIPublisherApplicationCreated(application))
+
+    return application

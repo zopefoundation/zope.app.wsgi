@@ -19,7 +19,7 @@ $Id$
 """
 __docformat__ = "reStructuredText"
 
-from zope.interface import Interface
+import zope.interface
 from zope.publisher.interfaces.http import IHeaderOutput
 
 
@@ -42,7 +42,7 @@ class IWSGIOutput(IHeaderOutput):
         ``start_response()`` callable to begin the response.
         """
 
-class IWSGIApplication(Interface):
+class IWSGIApplication(zope.interface.Interface):
     """A WSGI application."""
 
     def __call__(environ, start_response):
@@ -67,8 +67,21 @@ class IWSGIApplication(Interface):
         """
 
 
-class IWSGIServer(Interface):
+class IWSGIServer(zope.interface.Interface):
     """A WSGI server."""
 
     def set_application(app):
         """Tells the server about the application to use."""
+
+
+class IWSGIPublisherApplicationCreatedEvent(zope.interface.Interface):
+    """A WSGI application has been created."""
+
+    application = zope.interface.Attribute("The WSGI application.")
+
+
+class WSGIPublisherApplicationCreated(object):
+    zope.interface.implements(IWSGIPublisherApplicationCreatedEvent)
+
+    def __init__(self, application):
+        self.application = application
