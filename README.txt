@@ -27,6 +27,9 @@ Changes
 
 * Added Trove classifiers.
 
+* Notify WSGIPublisherApplicationCreated event when WSGI application is
+  created.
+
 * Fixed deprecation warning in ftesting.zcml: ZopeSecurityPolicy moved to
   zope.securitypolicy.
 
