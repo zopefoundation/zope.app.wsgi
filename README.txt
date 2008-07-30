@@ -22,10 +22,16 @@ factory a la PasteDeploy_::
 Changes
 =======
 
-3.4.1 (unreleased)
+3.4.1 (2008-07-30)
 ------------------
 
 * Added Trove classifiers.
+
+* Notify WSGIPublisherApplicationCreated event when WSGI application is
+  created.
+
+* Fixed deprecation warning in ftesting.zcml: ZopeSecurityPolicy moved to
+  zope.securitypolicy.
 
 3.4.0 (2007-09-14)
 ------------------
