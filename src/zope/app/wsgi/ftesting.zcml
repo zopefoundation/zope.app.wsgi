@@ -13,7 +13,7 @@
   <include package="zope.app.securitypolicy" />
 
   <securityPolicy
-    component="zope.app.securitypolicy.zopepolicy.ZopeSecurityPolicy" />
+    component="zope.securitypolicy.zopepolicy.ZopeSecurityPolicy" />
 
   <role id="zope.Manager" title="Site Manager" />
 

@@ -27,6 +27,9 @@ Changes
 
 * Added Trove classifiers.
 
+* Fixed deprecation warning in ftesting.zcml: ZopeSecurityPolicy moved to
+  zope.securitypolicy.
+
 3.4.0 (2007-09-14)
 ------------------
 
