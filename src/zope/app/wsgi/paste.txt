@@ -1,0 +1,87 @@
+==================================================
+Zope WSGI application integration with PasteDeploy
+==================================================
+
+PasteDeploy provides a framework for defining WSGI component factories
+that are used for assembling an application using simple configuration
+files. The ``zope.app.wsgi.paste`` package provides an paste application
+factory for the Zope WSGI application server, created using the
+configuration file, typically the ``zope.conf``.
+
+To use in Paste, you include a configuration section like this::
+
+  [app:main]
+  use = egg:zope.app.wsgi
+  config_file = %(here)s/zope.conf
+
+This example defines a "main" application using the zope.app.wsgi
+factory.  The only option that is required by zope.app.wsgi is the
+path to a configuration file. That file typically defines a path to a
+site definition file (the ``site.zcml``) and things like eventlog
+configuration or enabling developer mode.
+
+The factory also accepts the ``handle_errors`` boolean argument.
+It's useful, when you don't want Zope application to handle exceptions
+and want it to propagate them to upper WSGI middlewares.
+
+The application factory only creates the WSGI application using the
+``zope.app.wsgi.getWSGIApplication`` function. So we don't test it
+here. Instead, we'll only examine the Paste application factory
+provided by ``zope.app.wsgi.paste.ZopeApplication``.
+
+Let's create testing site.zcml and zope.conf file.
+
+  >>> import os, tempfile
+  >>> temp_dir = tempfile.mkdtemp()
+  >>> sitezcml = os.path.join(temp_dir, 'site.zcml')
+  >>> open(sitezcml, 'w').write('<configure />')
+  >>> zopeconf = os.path.join(temp_dir, 'zope.conf')
+  >>> open(zopeconf, 'w').write('''
+  ... site-definition %s
+  ...
+  ... <zodb>
+  ...   <mappingstorage />
+  ... </zodb>
+  ...
+  ... <eventlog>
+  ...   <logfile>
+  ...     path STDOUT
+  ...   </logfile>
+  ... </eventlog>
+  ... ''' % sitezcml)
+
+Let's end any security interaction we have, as application will try to
+create new interaction for its tasks.
+
+  >>> from zope.security import management
+  >>> if management.queryInteraction(): management.endInteraction()
+
+Now, let's create the application using our application factory as
+Paste does.
+
+  >>> from zope.app.wsgi.paste import ZopeApplication
+  >>> app = ZopeApplication({}, zopeconf)
+
+  >>> app
+  <zope.app.wsgi.WSGIPublisherApplication object at 0x...>
+  >>> app.handleErrors
+  True
+
+We can also specify handle_errors as false using boolean or strings:
+
+  >>> app = ZopeApplication({}, zopeconf, handle_errors=False)
+  >>> app.handleErrors
+  False
+  
+  >>> for v in ('0', 'false', 'no', 'f', 'n'):
+  ...     print ZopeApplication({}, zopeconf, handle_errors=v).handleErrors
+  False
+  False
+  False
+  False
+  False
+
+Okay, remove the temporary files.
+
+  >>> import shutil
+  >>> shutil.rmtree(temp_dir)

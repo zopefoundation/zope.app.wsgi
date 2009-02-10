@@ -1,0 +1,51 @@
+=======
+CHANGES
+=======
+
+3.5.0 (unreleased)
+------------------
+
+- Add an application factory for Paste. So Zope application can now be
+  easily deployed with Paste .ini configuration like this::
+  
+    [app:main]
+    use = egg:zope.app.wsgi
+    config_file = %(here)s/zope.conf
+    handle_errors = false
+
+  The config_file is a required argument, however the handle_errors
+  defaults to True if not specified. Setting it to False allows you to
+  make WSGIPublisherApplication not handle exceptions itself but
+  propagate them to an upper middleware, like WebError or something. 
+
+- The ``WSGIPublisherApplication`` constructor and ``getWSGIApplication``
+  function now accept optional ``handle_errors`` argument, described
+  above. 
+
+- Change mailing list address to zope-dev at zope.org instead of retired
+  one.
+
+3.4.1 (2008-07-30)
+------------------
+
+- Added Trove classifiers.
+
+- Notify WSGIPublisherApplicationCreated event when WSGI application is
+  created.
+
+- Fixed deprecation warning in ftesting.zcml: ZopeSecurityPolicy moved to
+  zope.securitypolicy.
+
+3.4.0 (2007-09-14)
+------------------
+
+- Fixed the tests to run on Python 2.5 as well as Python 2.4.
+
+- Split ``getApplication`` into ``config`` and ``getApplication`` so
+  that ``config`` could be reused, for example for debugging.
+
+3.4.0a1 (2007-04-22)
+--------------------
+
+Initial release as a separate project, corresponds to zope.app.wsgi
+from Zope 3.4.0a1

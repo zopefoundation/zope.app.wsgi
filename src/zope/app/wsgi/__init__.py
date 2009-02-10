@@ -38,8 +38,10 @@ class WSGIPublisherApplication(object):
     """
     implements(interfaces.IWSGIApplication)
 
-    def __init__(self, db=None, factory=HTTPPublicationRequestFactory):
+    def __init__(self, db=None, factory=HTTPPublicationRequestFactory,
+                 handle_errors=True):
         self.requestFactory = None
+        self.handleErrors = handle_errors
 
         if db is not None:
             self.requestFactory = factory(db)
@@ -49,7 +51,7 @@ class WSGIPublisherApplication(object):
         request = self.requestFactory(environ['wsgi.input'], environ)
 
         # Let's support post-mortem debugging
-        handle_errors = environ.get('wsgi.handleErrors', True)
+        handle_errors = environ.get('wsgi.handleErrors', self.handleErrors)
 
         request = publish(request, handle_errors=handle_errors)
         response = request.response
@@ -63,8 +65,13 @@ class WSGIPublisherApplication(object):
 
 class PMDBWSGIPublisherApplication(WSGIPublisherApplication):
 
+    def __init__(self, db=None, factory=HTTPPublicationRequestFactory,
+                 handle_errors=False):
+        super(PMDBWSGIPublisherApplication, self).__init__(db, factory,
+                                                           handle_errors)
+
     def __call__(self, environ, start_response):
-        environ['wsgi.handleErrors'] = False
+        environ['wsgi.handleErrors'] = self.handleErrors
 
         # Call the application to handle the request and write a response
         try:
@@ -130,9 +137,10 @@ def config(configfile, schemafile=None, features=()):
     return db
 
 def getWSGIApplication(configfile, schemafile=None, features=(),
-                       requestFactory=HTTPPublicationRequestFactory):
+                       requestFactory=HTTPPublicationRequestFactory,
+                       handle_errors=True):
     db = config(configfile, schemafile, features)
-    application = WSGIPublisherApplication(db, requestFactory)
+    application = WSGIPublisherApplication(db, requestFactory, handle_errors)
 
     # Create the application, notify subscribers.
     notify(interfaces.WSGIPublisherApplicationCreated(application))

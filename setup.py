@@ -18,13 +18,16 @@ $Id$
 from setuptools import setup, find_packages, Extension
 
 setup(name='zope.app.wsgi',
-      version = '3.4.2dev',
+      version = '3.5.0dev',
       url='http://pypi.python.org/pypi/zope.app.wsgi',
       license='ZPL 2.1',
       description='WSGI application for the zope.publisher',
-      long_description=open('README.txt').read(),
+      long_description=\
+          open('README.txt').read() + \
+          '\n\n' + \
+          open('CHANGES.txt').read(),
       author='Zope Corporation and Contributors',
-      author_email='zope3-dev@zope.org',
+      author_email='zope-dev@zope.org',
       classifiers=['Environment :: Web Environment',
                    'Intended Audience :: Developers',
                    'License :: OSI Approved :: Zope Public License',
@@ -49,6 +52,11 @@ setup(name='zope.app.wsgi',
                         'zope.publisher',
                         'zope.security',
                         ],
+      entry_points={
+          'paste.app_factory': [
+              'main = zope.app.wsgi.paste:ZopeApplication'
+          ]
+      },
       include_package_data = True,
       zip_safe = False,
       )

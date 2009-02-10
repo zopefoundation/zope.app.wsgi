@@ -9,40 +9,16 @@ call::
 This is especially useful for debugging.
 
 To bring up Zope and obtain the WSGI application object at the same
-time, use the ``getWSGIApplication`` function.  Here's an example of a
-factory a la PasteDeploy_::
+time, use the ``getWSGIApplication`` function.
 
-    def application_factory(global_conf):
-        zope_conf = os.path.join(global_conf['here'], 'zope.conf')
-        return zope.app.wsgi.getWSGIApplication(zope_conf)
+This package also provides an easy to use application factory for
+PasteDeploy_. You can simply specify an application configuration
+like this in your Paste configuration file::
+
+    [app:main]
+    use = egg:zope.app.wsgi
+    config_file = %(here)s/zope.conf
+
+Look for more documentation inside the package itself.
 
 .. _PasteDeploy: http://pythonpaste.org/deploy/
-
-
-Changes
-=======
-
-3.4.1 (2008-07-30)
-------------------
-
-* Added Trove classifiers.
-
-* Notify WSGIPublisherApplicationCreated event when WSGI application is
-  created.
-
-* Fixed deprecation warning in ftesting.zcml: ZopeSecurityPolicy moved to
-  zope.securitypolicy.
-
-3.4.0 (2007-09-14)
-------------------
-
-* Fixed the tests to run on Python 2.5 as well as Python 2.4.
-
-* Split ``getApplication`` into ``config`` and ``getApplication`` so
-  that ``config`` could be reused, for example for debugging.
-
-3.4.0a1 (2007-04-22)
---------------------
-
-Initial release as a separate project, corresponds to zope.app.wsgi
-from Zope 3.4.0a1

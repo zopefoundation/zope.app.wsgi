@@ -112,7 +112,7 @@ def test_suite():
     return unittest.TestSuite((
         functional_suite,
         doctest.DocFileSuite(
-            'README.txt', 'fileresult.txt',
+            'README.txt', 'fileresult.txt', 'paste.txt',
             setUp=setUp, checker=checker,
             tearDown=placelesssetup.tearDown,
             optionflags=doctest.NORMALIZE_WHITESPACE|doctest.ELLIPSIS),
