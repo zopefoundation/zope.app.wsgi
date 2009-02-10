@@ -5,6 +5,9 @@ CHANGES
 3.5.0 (unreleased)
 ------------------
 
+- Make devmode warning message more generic. We don't nesessary have the
+  `etc/zope.conf` file nowadays when using buildout-based setups.
+
 - Add an application factory for Paste. So Zope application can now be
   easily deployed with Paste .ini configuration like this::
   

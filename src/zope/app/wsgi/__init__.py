@@ -125,7 +125,9 @@ def config(configfile, schemafile=None, features=()):
         features += ('devmode',)
         logging.warning("Developer mode is enabled: this is a security risk "
             "and should NOT be enabled on production servers. Developer mode "
-            "can be turned off in etc/zope.conf")
+            "can usually be turned off by setting the `devmode` option to "
+            "`off` or by removing it from the instance configuration file "
+            "completely.")
 
     # Execute the ZCML configuration.
     appsetup.config(options.site_definition, features=features)
