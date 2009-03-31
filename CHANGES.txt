@@ -2,10 +2,16 @@
 CHANGES
 =======
 
-3.5.1 (unreleased)
+3.5.2 (unreleased)
 ------------------
 
 - ...
+
+3.5.1 (2009-03-31)
+------------------
+
+- The ``WSGIPublisherApplication`` call now provides a user name
+  in the environment meant for use in logs.
 
 3.5.0 (2009-02-10)
 ------------------
