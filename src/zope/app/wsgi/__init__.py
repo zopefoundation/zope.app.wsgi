@@ -55,12 +55,24 @@ class WSGIPublisherApplication(object):
 
         request = publish(request, handle_errors=handle_errors)
         response = request.response
+        try:
+            environ['wsgi.user_name'] = format_login(
+                request.principal.info.login) 
+        except AttributeError:
+            pass
 
         # Start the WSGI server response
         start_response(response.getStatusString(), response.getHeaders())
 
         # Return the result body iterable.
         return response.consumeBodyIter()
+
+
+# Defensive against ids with whitespace
+def format_login(login):
+    if login != login.replace(' ',''):
+        login = '"'+login+'"'
+    return login
 
 
 class PMDBWSGIPublisherApplication(WSGIPublisherApplication):
