@@ -23,6 +23,7 @@ import ZConfig
 from zope.event import notify
 from zope.interface import implements
 from zope.publisher.publish import publish
+from zope.publisher.interfaces.logginginfo import ILoggingInfo
 
 from zope.app.appsetup import appsetup
 from zope.app.publication.httpfactory import HTTPPublicationRequestFactory
@@ -55,24 +56,19 @@ class WSGIPublisherApplication(object):
 
         request = publish(request, handle_errors=handle_errors)
         response = request.response
-        try:
-            environ['wsgi.user_name'] = format_login(
-                request.principal.info.login) 
-        except AttributeError:
-            pass
+        # Get logging info from principal for log use
+        logging_info = ILoggingInfo(request.principal, None)
+        if logging_info is None:
+            message = '-'
+        else:
+            message = logging_info.getLogMessage()
+        environ['wsgi.logging_info'] = message
 
         # Start the WSGI server response
         start_response(response.getStatusString(), response.getHeaders())
 
         # Return the result body iterable.
         return response.consumeBodyIter()
-
-
-# Defensive against ids with whitespace
-def format_login(login):
-    if login != login.replace(' ',''):
-        login = '"'+login+'"'
-    return login
 
 
 class PMDBWSGIPublisherApplication(WSGIPublisherApplication):
