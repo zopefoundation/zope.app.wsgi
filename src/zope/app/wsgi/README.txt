@@ -58,6 +58,12 @@ is okay, since we have not setup anything. Getting a request successfully
 processed would require us to bring up a lot of Zope 3's system, which would
 be just a little bit too much for this demonstration.
 
+We can check the environ after being sent to the app and also see that
+a key has been set to store user names for use in access logs:
+
+  >>> 'wsgi.logging_info' in environ
+  True
+
 Now that we have seen the manual way of initializing and using the publisher
 application, here is the way it is done using all of Zope 3's setup machinery::
 
