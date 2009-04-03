@@ -93,6 +93,53 @@ taken:
   i.e. by calling a method on the server that sets the application.
 
 
+Access logging
+--------------
+
+But let's test at least the user info logging feature. We can check the
+environ after being sent to the app and also see that a key has been set to
+store user names for use in access logs.
+
+The key points be default to ``-`` if no user info is found:
+
+  >>> print environ
+  {'wsgi.input': <cStringIO.StringI object at ...>,
+   'wsgi.logging_info': '-', 'PATH_INFO': '/'}
+
+Since we do not have a principal available in this setup we simply provide
+a ILoggingInfo adapter for our missing principal e.g. None:
+
+  >>> import zope.interface
+  >>> import zope.component
+  >>> from zope.publisher.interfaces.logginginfo import ILoggingInfo
+  >>> from zope.security.interfaces import IPrincipal
+  >>> class LoggingInfoStub(object):
+  ...     zope.interface.implements(ILoggingInfo)
+  ...     zope.component.adapts(zope.interface.Interface)  
+  ...     def __init__(self, request):
+  ...         self.request = request 
+  ...     def getLogMessage(self):
+  ...         return 'foobar'
+
+Now register the ILoggingInfo adapter and check again:
+
+  >>> zope.component.provideAdapter(LoggingInfoStub) 
+  >>> print ''.join(app(environ, start_response))
+  <html><head><title>ComponentLookupError</title></head>
+  <body><h2>ComponentLookupError</h2>
+  A server error occurred.
+  </body></html>
+  <BLANKLINE>
+
+As you can see, the app is still not working but our ILoggingInfo stub get
+invoked and provides a custom logging_info message:
+
+  >>> print environ
+  {'wsgi.input': <cStringIO.StringI object at ...>,
+   'wsgi.logging_info': 'foobar',
+   'PATH_INFO': '/'}
+
+
 Creating A WSGI Application
 ---------------------------
 

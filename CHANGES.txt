@@ -2,10 +2,19 @@
 CHANGES
 =======
 
-3.5.2 (unreleased)
+3.5.3 (unreleased)
 ------------------
 
 - ...
+
+3.5.2 (2009-04-03)
+------------------
+
+- The ``WSGIPublisherApplication`` uses now the ´´ILoggingInfo´´ concept given
+  from zope.publisher.interfaces.logginginfo for log user infos usable for
+  access logs. This allows you to implement your own access log user info 
+  message. See zope.publisher.interfaces.logginginfo.ILoggingInfo for more
+  information.
 
 3.5.1 (2009-03-31)
 ------------------
