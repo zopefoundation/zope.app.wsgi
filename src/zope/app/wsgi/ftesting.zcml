@@ -7,10 +7,10 @@
   <!-- This file is the equivalent of site.zcml and it is -->
   <!-- used for functional testing setup -->
 
-  <include package="zope.app.securitypolicy" file="meta.zcml" />
+  <include package="zope.securitypolicy" file="meta.zcml" />
   <include package="zope.app.zcmlfiles" />
 
-  <include package="zope.app.securitypolicy" />
+  <include package="zope.securitypolicy" />
 
   <securityPolicy
     component="zope.securitypolicy.zopepolicy.ZopeSecurityPolicy" />
