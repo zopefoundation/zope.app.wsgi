@@ -19,6 +19,7 @@ import os
 import sys
 import logging
 import ZConfig
+import zope.processlifetime
 
 from zope.event import notify
 from zope.interface import implements
@@ -142,7 +143,7 @@ def config(configfile, schemafile=None, features=()):
 
     # Connect to and open the database, notify subscribers.
     db = appsetup.multi_database(options.databases)[0][0]
-    notify(appsetup.interfaces.DatabaseOpened(db))
+    notify(zope.processlifetime.DatabaseOpened(db))
 
     return db
 

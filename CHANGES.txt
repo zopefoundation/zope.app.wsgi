@@ -5,14 +5,15 @@ CHANGES
 3.5.3 (unreleased)
 ------------------
 
-- ...
+- Import database events directly from ``zope.processlifetime``
+  instead of using BBB imports in ``zope.app.appsetup``.
 
 3.5.2 (2009-04-03)
 ------------------
 
 - The ``WSGIPublisherApplication`` uses now the ´´ILoggingInfo´´ concept given
   from zope.publisher.interfaces.logginginfo for log user infos usable for
-  access logs. This allows you to implement your own access log user info 
+  access logs. This allows you to implement your own access log user info
   message. See zope.publisher.interfaces.logginginfo.ILoggingInfo for more
   information.
 
@@ -30,7 +31,7 @@ CHANGES
 
 - Add an application factory for Paste. So Zope application can now be
   easily deployed with Paste .ini configuration like this::
-  
+
     [app:main]
     use = egg:zope.app.wsgi
     config_file = %(here)s/zope.conf
@@ -39,11 +40,11 @@ CHANGES
   The config_file is a required argument, however the handle_errors
   defaults to True if not specified. Setting it to False allows you to
   make WSGIPublisherApplication not handle exceptions itself but
-  propagate them to an upper middleware, like WebError or something. 
+  propagate them to an upper middleware, like WebError or something.
 
 - The ``WSGIPublisherApplication`` constructor and ``getWSGIApplication``
   function now accept optional ``handle_errors`` argument, described
-  above. 
+  above.
 
 - Change mailing list address to zope-dev at zope.org instead of retired
   one.
