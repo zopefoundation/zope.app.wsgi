@@ -2,7 +2,7 @@
 CHANGES
 =======
 
-3.5.3 (unreleased)
+3.6.0 (2009-06-20)
 ------------------
 
 - Import database events directly from ``zope.processlifetime``
