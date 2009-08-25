@@ -25,7 +25,7 @@ Changes
 3.4.2 (unreleased)
 ------------------
 
-* No changes yet.
+* Support product configuration sections in Zope configuration files.
 
 3.4.1 (2008-07-30)
 ------------------
