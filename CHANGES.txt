@@ -5,7 +5,7 @@ CHANGES
 3.6.1 (unreleased)
 ------------------
 
-- Nothing changed yet.
+- Support product configuration sections in Zope configuration files.
 
 
 3.6.0 (2009-06-20)
