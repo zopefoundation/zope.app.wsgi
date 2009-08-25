@@ -20,6 +20,7 @@ import sys
 import logging
 import ZConfig
 import zope.processlifetime
+import zope.app.appsetup.product
 
 from zope.event import notify
 from zope.interface import implements
@@ -126,6 +127,10 @@ def config(configfile, schemafile=None, features=()):
     if options.path:
         sys.path[:0] = [os.path.abspath(p) for p in options.path]
 
+    # Parse product configs
+    zope.app.appsetup.product.setProductConfigurations(
+        options.product_config)
+    
     # Setup the event log
     options.eventlog()
 
