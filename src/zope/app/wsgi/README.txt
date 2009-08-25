@@ -170,6 +170,10 @@ example:
   ...     path STDOUT
   ...   </logfile>
   ... </eventlog>
+  ...
+  ... <product-config sample>
+  ...   key1 val1
+  ... </product-config>
   ... ''' %sitezcml)
 
 
@@ -192,6 +196,12 @@ Create an WSGI application.
 
   >>> called[0].application is app
   True
+
+The product configs were parsed:
+
+  >>> import zope.app.appsetup.product as zapp
+  >>> print zapp.getProductConfiguration('sample')
+  {'key1': 'val1'}
 
   >>> import shutil
   >>> shutil.rmtree(temp_dir)
