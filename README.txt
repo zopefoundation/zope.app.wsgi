@@ -22,7 +22,7 @@ factory a la PasteDeploy_::
 Changes
 =======
 
-3.4.2 (unreleased)
+3.4.2 (2009-09-10)
 ------------------
 
 * Support product configuration sections in Zope configuration files.
