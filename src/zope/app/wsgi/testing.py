@@ -18,9 +18,8 @@ $Id$
 
 __docformat__ = "reStructuredText"
 
-import os
-from zope.app.testing.functional import ZCMLLayer
+import zope.app.wsgi
+from zope.app.wsgi.testlayer import BrowserLayer
 
-AppWSGILayer = ZCMLLayer(
-    os.path.join(os.path.split(__file__)[0], 'ftesting.zcml'),
-    __name__, 'AppWSGILayer', allow_teardown=True)
+AppWSGILayer = BrowserLayer(zope.app.wsgi)
+

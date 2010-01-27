@@ -20,11 +20,12 @@ import unittest
 import re
 
 from zope import component, interface
+from zope.component.testlayer import ZCMLFileLayer
 from zope.testing import doctest
 from zope.testing import renormalizing
 
+import zope.app.wsgi
 import zope.publisher.interfaces.browser
-from zope.app.testing import placelesssetup, ztapi
 from zope.app.publication.requestpublicationregistry import factoryRegistry
 from zope.app.publication.requestpublicationfactories import BrowserFactory
 from zope.app.wsgi.testing import AppWSGILayer
@@ -32,11 +33,10 @@ from zope.app.security.interfaces import IAuthentication
 from zope.app.security.principalregistry import principalRegistry
 
 
-def setUp(test):
-    placelesssetup.setUp(test)
-    factoryRegistry.register('GET', '*', 'browser', 0, BrowserFactory())
-    ztapi.provideUtility(IAuthentication, principalRegistry)
+class WSGILayer(ZCMLFileLayer):
 
+    def tearDown(self):
+        import pdb ; pdb.set_trace()
 
 
 class FileView:
@@ -71,7 +71,7 @@ nothing bad happens. :)
     ...     checker.NamesChecker(['browserDefault', '__call__']),
     ...     )
 
-    >>> from zope.testbrowser.testing import Browser
+    >>> from zope.app.wsgi.testlayer import Browser
     >>> browser = Browser()
     >>> browser.handleErrors = False
     >>> browser.open('http://localhost/@@test-file-view.html')
@@ -108,15 +108,14 @@ def test_suite():
     ])
     functional_suite = doctest.DocTestSuite()
     functional_suite.layer = AppWSGILayer
+    doctest_suite = doctest.DocFileSuite(
+            'README.txt', 'fileresult.txt', 'paste.txt',
+            checker=checker,
+            optionflags=doctest.NORMALIZE_WHITESPACE|doctest.ELLIPSIS)
+    doctest_suite.layer = WSGILayer(zope.app.wsgi)
 
     return unittest.TestSuite((
-        functional_suite,
-        doctest.DocFileSuite(
-            'README.txt', 'fileresult.txt', 'paste.txt',
-            setUp=setUp, checker=checker,
-            tearDown=placelesssetup.tearDown,
-            optionflags=doctest.NORMALIZE_WHITESPACE|doctest.ELLIPSIS),
-        ))
+        functional_suite, doctest_suite))
 
 if __name__ == '__main__':
     unittest.main(defaultTest='test_suite')
