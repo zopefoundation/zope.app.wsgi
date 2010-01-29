@@ -2,7 +2,7 @@
 CHANGES
 =======
 
-3.6.1 (unreleased)
+3.6.1 (2010-01-29)
 ------------------
 
 - Support product configuration sections in Zope configuration files.
