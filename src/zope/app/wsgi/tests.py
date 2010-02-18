@@ -25,6 +25,7 @@ from zope.component.testlayer import ZCMLFileLayer
 from zope.testing import doctest
 from zope.testing import renormalizing
 
+import zope.event
 import zope.app.wsgi
 import zope.publisher.interfaces.browser
 from zope.app.publication.requestpublicationregistry import factoryRegistry
@@ -36,6 +37,10 @@ from zope.securitypolicy.tests import principalRegistry
 
 class WSGILayer(ZCMLFileLayer):
     pass
+
+
+def cleanEvents(s):
+    zope.event.subscribers.pop()
 
 
 class FileView:
@@ -107,14 +112,23 @@ def test_suite():
     ])
     functional_suite = doctest.DocTestSuite()
     functional_suite.layer = AppWSGILayer
+    
+    readme_test = doctest.DocFileSuite(
+            'README.txt',
+            checker=checker, tearDown=cleanEvents,
+            optionflags=doctest.NORMALIZE_WHITESPACE|doctest.ELLIPSIS)
+
     doctest_suite = doctest.DocFileSuite(
-            'README.txt', 'fileresult.txt', 'paste.txt',
+            'fileresult.txt', 'paste.txt',
             checker=checker,
             optionflags=doctest.NORMALIZE_WHITESPACE|doctest.ELLIPSIS)
+
+    readme_test.layer = WSGILayer(zope.app.wsgi)
     doctest_suite.layer = WSGILayer(zope.app.wsgi)
 
+
     return unittest.TestSuite((
-        functional_suite, doctest_suite))
+        functional_suite, readme_test, doctest_suite))
 
 if __name__ == '__main__':
     unittest.main(defaultTest='test_suite')

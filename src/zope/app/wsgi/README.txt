@@ -176,12 +176,6 @@ The product configs were parsed:
   >>> import shutil
   >>> shutil.rmtree(temp_dir)
 
-We remove our handler::
-
-  >>> from zope.site.hooks import getSiteManager
-  >>> getSiteManager().unregisterHandler(handler)
-  True
-
 
 About WSGI
 ----------
