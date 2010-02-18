@@ -18,6 +18,7 @@ $Id$
 import tempfile
 import unittest
 import re
+import zope.component
 
 from zope import component, interface
 from zope.component.testlayer import ZCMLFileLayer
@@ -29,14 +30,12 @@ import zope.publisher.interfaces.browser
 from zope.app.publication.requestpublicationregistry import factoryRegistry
 from zope.app.publication.requestpublicationfactories import BrowserFactory
 from zope.app.wsgi.testing import AppWSGILayer
-from zope.app.security.interfaces import IAuthentication
-from zope.app.security.principalregistry import principalRegistry
+from zope.authentication.interfaces import IAuthentication
+from zope.securitypolicy.tests import principalRegistry
 
 
 class WSGILayer(ZCMLFileLayer):
-
-    def tearDown(self):
-        import pdb ; pdb.set_trace()
+    pass
 
 
 class FileView:
