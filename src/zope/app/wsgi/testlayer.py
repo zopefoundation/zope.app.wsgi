@@ -1,6 +1,3 @@
-
-import wsgi_intercept
-import wsgi_intercept.zope_testbrowser
 ##############################################################################
 #
 # Copyright (c) 2010 Zope Corporation and Contributors.
@@ -14,7 +11,6 @@ import wsgi_intercept.zope_testbrowser
 # FOR A PARTICULAR PURPOSE.
 #
 ##############################################################################
-
 import wsgi_intercept
 from zope.app.appsetup.testlayer import ZODBLayer
 
