@@ -47,8 +47,8 @@ and return ``None`` as the write method.
 Now we can send the fabricated HTTP request to the application for processing:
 
   >>> print ''.join(app(environ, start_response))
-  <html><head><title>ComponentLookupError</title></head>
-  <body><h2>ComponentLookupError</h2>
+  <html><head><title>SystemError</title></head>
+  <body><h2>SystemError</h2>
   A server error occurred.
   </body></html>
   <BLANKLINE>
@@ -100,44 +100,13 @@ But let's test at least the user info logging feature. We can check the
 environ after being sent to the app and also see that a key has been set to
 store user names for use in access logs.
 
-The key points be default to ``-`` if no user info is found:
+This logging information is provided by an adapter registered for
+`ILoggingInfo`. Out-of-the-box, `zope.publisher` registers a base
+adapter that returns the principal id as value::
 
   >>> print environ
   {'wsgi.input': <cStringIO.StringI object at ...>,
-   'wsgi.logging_info': '-', 'PATH_INFO': '/'}
-
-Since we do not have a principal available in this setup we simply provide
-a ILoggingInfo adapter for our missing principal e.g. None:
-
-  >>> import zope.interface
-  >>> import zope.component
-  >>> from zope.publisher.interfaces.logginginfo import ILoggingInfo
-  >>> from zope.security.interfaces import IPrincipal
-  >>> class LoggingInfoStub(object):
-  ...     zope.interface.implements(ILoggingInfo)
-  ...     zope.component.adapts(zope.interface.Interface)  
-  ...     def __init__(self, request):
-  ...         self.request = request 
-  ...     def getLogMessage(self):
-  ...         return 'foobar'
-
-Now register the ILoggingInfo adapter and check again:
-
-  >>> zope.component.provideAdapter(LoggingInfoStub) 
-  >>> print ''.join(app(environ, start_response))
-  <html><head><title>ComponentLookupError</title></head>
-  <body><h2>ComponentLookupError</h2>
-  A server error occurred.
-  </body></html>
-  <BLANKLINE>
-
-As you can see, the app is still not working but our ILoggingInfo stub get
-invoked and provides a custom logging_info message:
-
-  >>> print environ
-  {'wsgi.input': <cStringIO.StringI object at ...>,
-   'wsgi.logging_info': 'foobar',
-   'PATH_INFO': '/'}
+   'wsgi.logging_info': 'zope.anybody', 'PATH_INFO': '/'}
 
 
 Creating A WSGI Application
@@ -182,6 +151,7 @@ Create an handler for the event.
   >>> import zope.component
   >>> from zope.app.wsgi.interfaces import IWSGIPublisherApplicationCreatedEvent
   >>> called = []
+
   >>> @zope.component.adapter(IWSGIPublisherApplicationCreatedEvent)
   ... def handler(event):
   ...     called.append(event)
@@ -205,6 +175,7 @@ The product configs were parsed:
 
   >>> import shutil
   >>> shutil.rmtree(temp_dir)
+
 
 About WSGI
 ----------

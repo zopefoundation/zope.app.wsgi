@@ -18,25 +18,25 @@ $Id$
 import tempfile
 import unittest
 import re
+import zope.component
 
 from zope import component, interface
+from zope.component.testlayer import ZCMLFileLayer
 from zope.testing import doctest
 from zope.testing import renormalizing
 
+import zope.event
+import zope.app.wsgi
 import zope.publisher.interfaces.browser
-from zope.app.testing import placelesssetup, ztapi
 from zope.app.publication.requestpublicationregistry import factoryRegistry
 from zope.app.publication.requestpublicationfactories import BrowserFactory
 from zope.app.wsgi.testing import AppWSGILayer
-from zope.app.security.interfaces import IAuthentication
-from zope.app.security.principalregistry import principalRegistry
+from zope.authentication.interfaces import IAuthentication
+from zope.securitypolicy.tests import principalRegistry
 
 
-def setUp(test):
-    placelesssetup.setUp(test)
-    factoryRegistry.register('GET', '*', 'browser', 0, BrowserFactory())
-    ztapi.provideUtility(IAuthentication, principalRegistry)
-
+def cleanEvents(s):
+    zope.event.subscribers.pop()
 
 
 class FileView:
@@ -71,7 +71,7 @@ nothing bad happens. :)
     ...     checker.NamesChecker(['browserDefault', '__call__']),
     ...     )
 
-    >>> from zope.testbrowser.testing import Browser
+    >>> from zope.app.wsgi.testlayer import Browser
     >>> browser = Browser()
     >>> browser.handleErrors = False
     >>> browser.open('http://localhost/@@test-file-view.html')
@@ -109,14 +109,22 @@ def test_suite():
     functional_suite = doctest.DocTestSuite()
     functional_suite.layer = AppWSGILayer
 
+    readme_test = doctest.DocFileSuite(
+            'README.txt',
+            checker=checker, tearDown=cleanEvents,
+            optionflags=doctest.NORMALIZE_WHITESPACE|doctest.ELLIPSIS)
+
+    doctest_suite = doctest.DocFileSuite(
+            'fileresult.txt', 'paste.txt',
+            checker=checker,
+            optionflags=doctest.NORMALIZE_WHITESPACE|doctest.ELLIPSIS)
+
+    readme_test.layer = ZCMLFileLayer(zope.app.wsgi)
+    doctest_suite.layer = ZCMLFileLayer(zope.app.wsgi)
+
+
     return unittest.TestSuite((
-        functional_suite,
-        doctest.DocFileSuite(
-            'README.txt', 'fileresult.txt', 'paste.txt',
-            setUp=setUp, checker=checker,
-            tearDown=placelesssetup.tearDown,
-            optionflags=doctest.NORMALIZE_WHITESPACE|doctest.ELLIPSIS),
-        ))
+        functional_suite, readme_test, doctest_suite))
 
 if __name__ == '__main__':
     unittest.main(defaultTest='test_suite')

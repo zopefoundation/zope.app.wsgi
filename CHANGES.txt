@@ -2,11 +2,11 @@
 CHANGES
 =======
 
-3.6.2 (unreleased)
+3.7.0 (unreleased)
 ------------------
 
-- Nothing changed yet.
-
+- Rewrite tests in order not to dependent on zope.app.testing and
+  zope.app.zcmlfiles.
 
 3.6.1 (2010-01-29)
 ------------------
