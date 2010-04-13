@@ -8,9 +8,25 @@ CHANGES
 - Rewrite tests in order not to dependent on zope.app.testing and
   zope.app.zcmlfiles.
 
-- Add an test http function and a Browser class and BrowserLayer test
-  layer to write functional tests.
+- zope.app.wsgi.testlayer introduces new testing functionality that
+  can replace the old functionality in zope.app.testing. In addition,
+  it supports using zope.testbrowser with WSGI directly (instead of
+  relying on zope.app.testing, which pulls in a lot of dependencies).
 
+  The interesting parts are:
+
+  * zope.app.wsgi.testlayer.BrowserLayer: this sets up a minimal layer that
+    allows you to use the new WSGI-enabled Browser.
+
+  * zope.app.wsgi.testlayer.Browser: this is a subclass of Browser from 
+    zope.testbrowser.browser. Use it instead of zope.testbrowser.browser
+    directly to use the test browser with WSGI. You need to use BrowserLayer
+    with your tests for this to work.
+
+  * zope.app.wsgi.testlayer.http: this is the equivalent to the http()
+    function in zope.app.testing. It allows low-level HTTP access
+    through WSGI. You need to use BrowserLayer with your tests for
+    this to work.
 
 3.6.1 (2010-01-29)
 ------------------
