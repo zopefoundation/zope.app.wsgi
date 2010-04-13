@@ -2,7 +2,7 @@
 CHANGES
 =======
 
-3.7.0 (unreleased)
+3.7.0 (2010-04-13)
 ------------------
 
 - Rewrite tests in order not to dependent on zope.app.testing and
