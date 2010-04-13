@@ -8,6 +8,10 @@ CHANGES
 - Rewrite tests in order not to dependent on zope.app.testing and
   zope.app.zcmlfiles.
 
+- Add an test http function and a Browser class and BrowserLayer test
+  layer to write functional tests.
+
+
 3.6.1 (2010-01-29)
 ------------------
 

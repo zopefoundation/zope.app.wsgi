@@ -11,6 +11,8 @@
 # FOR A PARTICULAR PURPOSE.
 #
 ##############################################################################
+from StringIO import StringIO
+
 import wsgi_intercept
 from zope.app.appsetup.testlayer import ZODBLayer
 
@@ -38,7 +40,6 @@ class Browser(ZopeTestbrowser):
         ZopeTestbrowser.__init__(self, *args, **kwargs)
 
 
-
 class BrowserLayer(ZODBLayer):
     """This create a test layer with a test database and register a wsgi
     application to use that test database.
@@ -48,10 +49,12 @@ class BrowserLayer(ZODBLayer):
     application.
     """
 
+    handleErrors = True
+
     def testSetUp(self):
         super(BrowserLayer, self).testSetUp()
         wsgi_app = WSGIPublisherApplication(
-            self.db, HTTPPublicationRequestFactory, False)
+            self.db, HTTPPublicationRequestFactory, self.handleErrors)
 
         def factory():
             return wsgi_app
@@ -62,3 +65,25 @@ class BrowserLayer(ZODBLayer):
     def testTearDown(self):
         super(BrowserLayer, self).testTearDown()
         wsgi_intercept.remove_wsgi_intercept('localhost', 80)
+
+
+class NotInBrowserLayer(Exception):
+    """The current test is not running in a layer inheriting from
+    BrowserLayer.
+    """
+
+
+def http(string):
+    key = ('localhost', 80)
+
+    if key not in wsgi_intercept._wsgi_intercept:
+        raise NotInBrowserLayer(NotInBrowserLayer.__doc__)
+
+    (app_fn, script_name) = wsgi_intercept._wsgi_intercept[key]
+    app = app_fn()
+
+    socket = wsgi_intercept.wsgi_fake_socket(app, 'localhost', 80, '')
+    socket.sendall(string.lstrip())
+    result = socket.makefile()
+    return result.getvalue()
+
