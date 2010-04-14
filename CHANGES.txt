@@ -2,7 +2,7 @@
 CHANGES
 =======
 
-3.8.0 (unreleased)
+3.8.0 (2010-04-14)
 ------------------
 
 - zope.app.wsgi.testlayer is now a lot more compatible with 
