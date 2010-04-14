@@ -25,6 +25,7 @@
   <include package="zope.annotation" />
   <include package="zope.publisher" />
   <include package="zope.password" />
+  <include package="zope.traversing.browser" />
 
   <include package="zope.app.wsgi" />
 
