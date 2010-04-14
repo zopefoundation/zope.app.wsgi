@@ -2,11 +2,21 @@
 CHANGES
 =======
 
-3.7.1 (unreleased)
+3.8.0 (unreleased)
 ------------------
 
-- Nothing changed yet.
+- zope.app.wsgi.testlayer is now a lot more compatible with 
+  the HTTPCaller() functionality in zope.app.testing, which it can
+  replace:
 
+  - same transaction behavior - pending transactions are committed
+    before request and synchronized afterwards.
+
+  - support for browser.handleErrors (for zope.testbrowser).
+
+  - support for clear-text (non-base64) Basic authentication headers,
+    which are easier to read in the tests (though not correct in
+    actual HTTP traffic).
 
 3.7.0 (2010-04-13)
 ------------------
