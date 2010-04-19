@@ -5,13 +5,13 @@ CHANGES
 3.8.1 (unreleased)
 ------------------
 
-- Nothing changed yet.
+- Bugfix: initialize any <logger> defined in the config, as zope.app.server does
 
 
 3.8.0 (2010-04-14)
 ------------------
 
-- zope.app.wsgi.testlayer is now a lot more compatible with 
+- zope.app.wsgi.testlayer is now a lot more compatible with
   the HTTPCaller() functionality in zope.app.testing, which it can
   replace:
 
@@ -40,7 +40,7 @@ CHANGES
   * zope.app.wsgi.testlayer.BrowserLayer: this sets up a minimal layer that
     allows you to use the new WSGI-enabled Browser.
 
-  * zope.app.wsgi.testlayer.Browser: this is a subclass of Browser from 
+  * zope.app.wsgi.testlayer.Browser: this is a subclass of Browser from
     zope.testbrowser.browser. Use it instead of zope.testbrowser.browser
     directly to use the test browser with WSGI. You need to use BrowserLayer
     with your tests for this to work.
