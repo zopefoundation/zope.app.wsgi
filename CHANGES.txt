@@ -2,11 +2,18 @@
 CHANGES
 =======
 
-3.8.1 (unreleased)
+3.9.0 (2010-04-19)
 ------------------
 
-- Bugfix: initialize any <logger> defined in the config, as zope.app.server does
+- Return a FakeResponse object in zope.app.wsgi.testlayer.http,
+  so it becomes easier to port over tests from zope.app.testing's
+  HTTPCaller.
 
+- X-Powered-By header is now stripped by zope.app.wsgi.testlayer as
+  it is by zope.app.testing.
+
+- Bugfix: initialize any <logger> defined in the config, as
+  zope.app.server does.
 
 3.8.0 (2010-04-14)
 ------------------

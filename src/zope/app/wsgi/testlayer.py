@@ -161,6 +161,22 @@ class FakeResponse(object):
     def getStatusString(self):
         return self.response_text.split('\n', 1)[0]
 
+    def getHeader(self, name, default=None):
+        without_body = self.response_text.split('\n\n', 1)[0]
+        headers_text = without_body.split('\n', 1)[1]
+        headers = headers_text.split('\n')
+        result = []
+        for header in headers:
+            header_name, header_value = header.split(': ', 1)
+            if name == header_name:
+                result.append(header_value)
+        if not result:
+            return default
+        elif len(result) == 1:
+            return result[0]
+        else:
+            return result
+
     def getBody(self):
         parts = self.response_text.split('\n\n', 1)
         if len(parts) < 2:
