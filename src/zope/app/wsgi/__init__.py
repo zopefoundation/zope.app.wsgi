@@ -114,9 +114,13 @@ def config(configfile, schemafile=None, features=()):
     # Parse product configs
     zope.app.appsetup.product.setProductConfigurations(
         options.product_config)
-    
+
     # Setup the event log
     options.eventlog()
+
+    # Setup other defined loggers
+    for logger in options.loggers:
+        logger()
 
     # Insert the devmode feature, if turned on
     if options.devmode:

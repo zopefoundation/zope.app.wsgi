@@ -22,6 +22,11 @@ factory a la PasteDeploy_::
 Changes
 =======
 
+3.4.3 (2010-04-19)
+------------------
+
+* Bugfix: initialize any <logger> defined in the config, as zope.app.server does
+
 3.4.2 (2009-09-10)
 ------------------
 
