@@ -2,11 +2,13 @@
 CHANGES
 =======
 
-3.9.1 (unreleased)
+3.9.1 (2010-04-24)
 ------------------
 
-- Nothing changed yet.
+- Add support for testing XMLRPC using zope.app.wsgi.testlayer.
 
+- Fix a bug in the status string handling in zope.app.wsgi.testlayer's
+  FakeResponse.
 
 3.9.0 (2010-04-19)
 ------------------

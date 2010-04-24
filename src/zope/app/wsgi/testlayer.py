@@ -14,6 +14,7 @@
 from StringIO import StringIO
 import re
 import base64
+import xmlrpclib
 
 from transaction import commit
 from wsgi_intercept.mechanize_intercept import Browser as BaseInterceptBrowser
@@ -155,11 +156,13 @@ class FakeResponse(object):
 
     def getStatus(self):
         line = self.getStatusString()
-        protocol, status, rest = line.split(' ', 2)
+        status, rest = line.split(' ', 1)
         return int(status)
 
     def getStatusString(self):
-        return self.response_text.split('\n', 1)[0]
+        status_line = self.response_text.split('\n', 1)[0]
+        protocol, status_string = status_line.split(' ', 1)
+        return status_string
 
     def getHeader(self, name, default=None):
         without_body = self.response_text.split('\n\n', 1)[0]
@@ -176,6 +179,16 @@ class FakeResponse(object):
             return result[0]
         else:
             return result
+
+    def getHeaders(self):
+        without_body = self.response_text.split('\n\n', 1)[0]
+        headers_text = without_body.split('\n', 1)[1]
+        headers = headers_text.split('\n')
+        result = []
+        for header in headers:
+            header_name, header_value = header.split(':', 1)
+            result.append((header_name, header_value))
+        return result
 
     def getBody(self):
         parts = self.response_text.split('\n\n', 1)
@@ -207,3 +220,54 @@ def http(string, handle_errors=True):
     result = socket.makefile()
     return FakeResponse(result.getvalue())
 
+class XMLRPCTestTransport(xmlrpclib.Transport):
+    """xmlrpclib transport that delegates to http().
+    
+    It can be used like a normal transport, including support for basic
+    authentication.
+    """
+
+    verbose = False
+    handleErrors = True
+
+    def request(self, host, handler, request_body, verbose=0):
+        request = "POST %s HTTP/1.0\n" % (handler,)
+        request += "Content-Length: %i\n" % len(request_body)
+        request += "Content-Type: text/xml\n"
+
+        host, extra_headers, x509 = self.get_host_info(host)
+        if extra_headers:
+            request += "Authorization: %s\n" % (
+                dict(extra_headers)["Authorization"],)
+
+        request += "\n" + request_body
+        response = http(request, handle_errors=self.handleErrors)
+
+        errcode = response.getStatus()
+        errmsg = response.getStatusString()
+        # This is not the same way that the normal transport deals with the
+        # headers.
+        headers = response.getHeaders()
+
+        if errcode != 200:
+            raise xmlrpclib.ProtocolError(
+                host + handler,
+                errcode, errmsg,
+                headers
+                )
+
+        return self._parse_response(
+            StringIO(response.getBody()), sock=None)
+
+
+def XMLRPCServerProxy(uri, transport=None, encoding=None,
+                      verbose=0, allow_none=0, handleErrors=True):
+    """A factory that creates a server proxy using the XMLRPCTestTransport
+    by default.
+
+    """
+    if transport is None:
+        transport = XMLRPCTestTransport()
+    if isinstance(transport, XMLRPCTestTransport):
+        transport.handleErrors = handleErrors
+    return xmlrpclib.ServerProxy(uri, transport, encoding, verbose, allow_none)
