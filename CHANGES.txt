@@ -19,7 +19,7 @@ CHANGES
   it is by zope.app.testing.
 
 - Bugfix: initialize any <logger> defined in the config, as
-  zope.app.server does.
+  zope.app.server does. (Fixes #291147)
 
 3.8.0 (2010-04-14)
 ------------------
