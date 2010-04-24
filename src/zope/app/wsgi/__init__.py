@@ -85,19 +85,18 @@ class PMDBWSGIPublisherApplication(WSGIPublisherApplication):
 
         # Call the application to handle the request and write a response
         try:
-            app =  super(PMDBWSGIPublisherApplication, self)
+            app = super(PMDBWSGIPublisherApplication, self)
             return app.__call__(environ, start_response)
         except Exception, error:
-            import sys, pdb
+            import sys
+            import pdb
             print "%s:" % sys.exc_info()[0]
             print sys.exc_info()[1]
-            #import zope.security.management
-            #zope.security.management.restoreInteraction()
             try:
                 pdb.post_mortem(sys.exc_info()[2])
                 raise
             finally:
-                pass #zope.security.management.endInteraction()
+                pass
 
 
 def config(configfile, schemafile=None, features=()):
@@ -155,6 +154,7 @@ def config(configfile, schemafile=None, features=()):
     notify(zope.processlifetime.DatabaseOpened(db))
 
     return db
+
 
 def getWSGIApplication(configfile, schemafile=None, features=(),
                        requestFactory=HTTPPublicationRequestFactory,
