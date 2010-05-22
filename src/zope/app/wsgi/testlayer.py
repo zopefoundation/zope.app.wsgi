@@ -31,7 +31,7 @@ TEST_HOSTS = ['localhost', '127.0.0.1']
 class InterceptBrowser(BaseInterceptBrowser):
 
     default_schemes = ['http']
-    default_others = ['_http_error', '_http_request_upgrade',
+    default_others = ['_http_error',
                       '_http_default_error']
     default_features = ['_redirect', '_cookies', '_referer', '_refresh',
                         '_equiv', '_basicauth', '_digestauth']
