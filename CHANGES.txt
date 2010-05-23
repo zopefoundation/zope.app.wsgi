@@ -2,6 +2,7 @@
 CHANGES
 =======
 
+
 3.9.2 (unreleased)
 ------------------
 
@@ -16,6 +17,7 @@ CHANGES
 - Fix a bug in the status string handling in zope.app.wsgi.testlayer's
   FakeResponse.
 
+
 3.9.0 (2010-04-19)
 ------------------
 
@@ -28,6 +30,7 @@ CHANGES
 
 - Bugfix: initialize any <logger> defined in the config, as
   zope.app.server does. (Fixes #291147)
+
 
 3.8.0 (2010-04-14)
 ------------------
@@ -45,31 +48,33 @@ CHANGES
     which are easier to read in the tests (though not correct in
     actual HTTP traffic).
 
+
 3.7.0 (2010-04-13)
 ------------------
 
-- Rewrite tests in order not to dependent on zope.app.testing and
-  zope.app.zcmlfiles.
+- Rewrite tests in order not to dependent on ``zope.app.testing`` and
+  ``zope.app.zcmlfiles``.
 
-- zope.app.wsgi.testlayer introduces new testing functionality that
-  can replace the old functionality in zope.app.testing. In addition,
-  it supports using zope.testbrowser with WSGI directly (instead of
-  relying on zope.app.testing, which pulls in a lot of dependencies).
+- ``zope.app.wsgi.testlayer`` introduces new testing functionality that
+  can replace the old functionality in ``zope.app.testing``. In addition,
+  it supports using ``zope.testbrowser`` with WSGI directly (instead of
+  relying on ``zope.app.testing``, which pulls in a lot of dependencies).
 
   The interesting parts are:
 
-  * zope.app.wsgi.testlayer.BrowserLayer: this sets up a minimal layer that
-    allows you to use the new WSGI-enabled Browser.
+  * ``zope.app.wsgi.testlayer.BrowserLayer``: this sets up a minimal layer
+    that allows you to use the new WSGI-enabled Browser.
 
-  * zope.app.wsgi.testlayer.Browser: this is a subclass of Browser from
-    zope.testbrowser.browser. Use it instead of zope.testbrowser.browser
-    directly to use the test browser with WSGI. You need to use BrowserLayer
-    with your tests for this to work.
+  * ``zope.app.wsgi.testlayer.Browser``: this is a subclass of Browser from
+    ``zope.testbrowser.browser``. Use it instead of
+    ``zope.testbrowser.browser`` directly to use the test browser with WSGI.
+    You need to use ``BrowserLayer`` with your tests for this to work.
 
-  * zope.app.wsgi.testlayer.http: this is the equivalent to the http()
-    function in zope.app.testing. It allows low-level HTTP access
-    through WSGI. You need to use BrowserLayer with your tests for
+  * ``zope.app.wsgi.testlayer.http``: this is the equivalent to the ``http()``
+    function in ``zope.app.testing``. It allows low-level HTTP access
+    through WSGI. You need to use ``BrowserLayer`` with your tests for
     this to work.
+
 
 3.6.1 (2010-01-29)
 ------------------
@@ -83,6 +88,7 @@ CHANGES
 - Import database events directly from ``zope.processlifetime``
   instead of using BBB imports in ``zope.app.appsetup``.
 
+
 3.5.2 (2009-04-03)
 ------------------
 
@@ -92,11 +98,13 @@ CHANGES
   message. See zope.publisher.interfaces.logginginfo.ILoggingInfo for more
   information.
 
+
 3.5.1 (2009-03-31)
 ------------------
 
 - The ``WSGIPublisherApplication`` call now provides a user name
   in the environment meant for use in logs.
+
 
 3.5.0 (2009-02-10)
 ------------------
@@ -124,16 +132,18 @@ CHANGES
 - Change mailing list address to zope-dev at zope.org instead of retired
   one.
 
+
 3.4.1 (2008-07-30)
 ------------------
 
 - Added Trove classifiers.
 
-- Notify WSGIPublisherApplicationCreated event when WSGI application is
+- Notify ``WSGIPublisherApplicationCreated`` event when WSGI application is
   created.
 
-- Fixed deprecation warning in ftesting.zcml: ZopeSecurityPolicy moved to
-  zope.securitypolicy.
+- Fixed deprecation warning in ``ftesting.zcml``: ZopeSecurityPolicy moved to
+  ``zope.securitypolicy``.
+
 
 3.4.0 (2007-09-14)
 ------------------
@@ -143,8 +153,9 @@ CHANGES
 - Split ``getApplication`` into ``config`` and ``getApplication`` so
   that ``config`` could be reused, for example for debugging.
 
+
 3.4.0a1 (2007-04-22)
 --------------------
 
-Initial release as a separate project, corresponds to zope.app.wsgi
+Initial release as a separate project, corresponds to ``zope.app.wsgi``
 from Zope 3.4.0a1
