@@ -3,7 +3,7 @@ CHANGES
 =======
 
 
-3.9.3 (unreleased)
+3.9.3 (2010-10-14)
 ------------------
 
 - Python2.7 compatibility for xmlrpc. Transplant of zope.app.testing r116141.
