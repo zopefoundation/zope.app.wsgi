@@ -14,6 +14,7 @@
 from StringIO import StringIO
 import re
 import base64
+import httplib
 import xmlrpclib
 
 from transaction import commit
@@ -220,9 +221,19 @@ def http(string, handle_errors=True):
     result = socket.makefile()
     return FakeResponse(result.getvalue())
 
+
+class FakeSocket(object):
+
+    def __init__(self, data):
+        self.data = data
+
+    def makefile(self, mode, bufsize=None):
+        return StringIO(self.data)
+
+
 class XMLRPCTestTransport(xmlrpclib.Transport):
     """xmlrpclib transport that delegates to http().
-    
+
     It can be used like a normal transport, including support for basic
     authentication.
     """
@@ -256,8 +267,9 @@ class XMLRPCTestTransport(xmlrpclib.Transport):
                 headers
                 )
 
-        return self._parse_response(
-            StringIO(response.getBody()), sock=None)
+        res = httplib.HTTPResponse(FakeSocket(response.getBody()))
+        res.begin()
+        return self.parse_response(res)
 
 
 def XMLRPCServerProxy(uri, transport=None, encoding=None,
