@@ -23,6 +23,7 @@ import zope.publisher.http
 from zope.publisher.interfaces.http import IResult
 from zope.security.proxy import removeSecurityProxy
 
+
 class FallbackWrapper:
     interface.implements(IResult)
 
@@ -39,6 +40,7 @@ class FallbackWrapper:
             else:
                 break
 
+
 @component.adapter(file, zope.publisher.interfaces.http.IHTTPRequest)
 @interface.implementer(zope.publisher.http.IResult)
 def FileResult(f, request):
@@ -48,7 +50,7 @@ def FileResult(f, request):
         size = f.tell()
         f.seek(0)
         request.response.setHeader('Content-Length', str(size))
-        
+
     wrapper = request.environment.get('wsgi.file_wrapper')
     if wrapper is not None:
         f = wrapper(f)
@@ -67,6 +69,7 @@ if _tfile is file:
     # need a fake one. Sigh
     class _tfile:
         pass
+
 
 @component.adapter(_tfile, zope.publisher.interfaces.http.IHTTPRequest)
 @interface.implementer(zope.publisher.http.IResult)

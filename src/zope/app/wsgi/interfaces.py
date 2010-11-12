@@ -13,7 +13,7 @@
 ##############################################################################
 """WSGI-specific and compatible interfaces
 
-See PEP-0333 for details. 
+See PEP-0333 for details.
 
 $Id$
 """
@@ -41,6 +41,7 @@ class IWSGIOutput(IHeaderOutput):
         If the reponse has not begun, call the WSGI server's
         ``start_response()`` callable to begin the response.
         """
+
 
 class IWSGIApplication(zope.interface.Interface):
     """A WSGI application."""

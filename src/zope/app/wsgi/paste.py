@@ -17,6 +17,7 @@ $Id$
 """
 from zope.app.wsgi import getWSGIApplication
 
+
 def asbool(obj):
     if isinstance(obj, basestring):
         obj = obj.lower()
@@ -25,6 +26,7 @@ def asbool(obj):
         if obj in ('0', 'false', 'no', 'f', 'n'):
             return False
     return bool(obj)
+
 
 def ZopeApplication(global_config, config_file, handle_errors=True, **options):
     handle_errors = asbool(handle_errors)
