@@ -1,0 +1,40 @@
+We want to make sure that file returns work
+
+Let's register a view that returns a temporary file and make sure that
+nothing bad happens. :)
+
+    >>> from zope import component, interface
+    >>> from zope.app.wsgi.testing import FileView
+    >>> component.provideAdapter(FileView, name='test-file-view.html')
+    >>> from zope.security import checker
+    >>> checker.defineChecker(
+    ...     FileView,
+    ...     checker.NamesChecker(['browserDefault', '__call__']),
+    ...     )
+
+    >>> from zope.app.wsgi.testlayer import Browser
+    >>> browser = Browser()
+    >>> browser.handleErrors = False
+    >>> browser.open('http://localhost/@@test-file-view.html')
+    >>> browser.headers['content-type']
+    'text/plain'
+
+    >>> browser.headers['content-length']
+    '13'
+
+    >>> print browser.contents
+    Hello
+    World!
+    <BLANKLINE>
+
+Clean up:
+
+    >>> import zope.publisher.interfaces.browser
+    >>> checker.undefineChecker(FileView)
+    >>> component.provideAdapter(
+    ...     None,
+    ...     (interface.Interface,
+    ...     zope.publisher.interfaces.browser.IBrowserRequest),
+    ...     zope.publisher.interfaces.browser.IBrowserPublisher,
+    ...     'test-file-view.html',
+    ...     )

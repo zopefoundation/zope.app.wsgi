@@ -1,0 +1,36 @@
+It is possible to inject a wsgi stack by subclassing from BrowserLayer::
+
+First, create and register a view to test:
+
+    >>> from zope import component, interface
+    >>> from zope.app.wsgi.testing import IndexView
+    >>> component.provideAdapter(IndexView, name='index.html')
+    >>> from zope.security import checker
+    >>> checker.defineChecker(
+    ...     IndexView,
+    ...     checker.NamesChecker(['browserDefault', '__call__']),
+    ...     )
+
+    >>> from zope.app.wsgi.testlayer import Browser
+    >>> browser = Browser()
+    >>> browser.open('http://localhost/index.html')
+    >>> print browser.contents
+    <html>
+      <head>
+      </head>
+      <body><h1>Hello from the silly middleware</h1>
+        <p>This is the index</p>
+      </body>
+    </html>
+
+Clean up:
+
+    >>> import zope.publisher.interfaces.browser
+    >>> checker.undefineChecker(IndexView)
+    >>> component.provideAdapter(
+    ...     None,
+    ...     (interface.Interface,
+    ...     zope.publisher.interfaces.browser.IBrowserRequest),
+    ...     zope.publisher.interfaces.browser.IBrowserPublisher,
+    ...     'index.html',
+    ...     )
