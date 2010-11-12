@@ -51,6 +51,8 @@ class Browser(ZopeTestbrowser):
 # Compatibility helpers to behave like zope.app.testing
 
 basicre = re.compile('Basic (.+)?:(.+)?$')
+
+
 def auth_header(header):
     """This function takes an authorization HTTP header and encode the
     couple user, password into base 64 like the HTTP protocol wants
@@ -86,10 +88,11 @@ class TestBrowserMiddleware(object):
       password into base 64 if it is Basic authentication.
     """
 
-    def __init__(self, app, root, handle_errors):
+    def __init__(self, app, wsgi_stack, root, handle_errors):
         assert isinstance(handle_errors, bool)
-        self.root = root
         self.app = app
+        self.root = root
+        self.wsgi_stack = wsgi_stack
         self.default_handle_errors = str(handle_errors)
 
     def __call__(self, environ, start_response):
@@ -100,16 +103,16 @@ class TestBrowserMiddleware(object):
 
         # Handle authorization
         auth_key = 'HTTP_AUTHORIZATION'
-        if environ.has_key(auth_key):
+        if auth_key in environ:
             environ[auth_key] = auth_header(environ[auth_key])
 
         # Remove unwanted headers
-        def application_start_response(status, headers):
+        def application_start_response(status, headers, exc_info=None):
             headers = filter(is_wanted_header, headers)
             start_response(status, headers)
 
         commit()
-        for entry in self.app(environ, application_start_response):
+        for entry in self.wsgi_stack(environ, application_start_response):
             yield entry
         self.root._p_jar.sync()
 
@@ -123,14 +126,21 @@ class BrowserLayer(ZODBLayer):
     application.
     """
 
+    def setup_middleware(self, app):
+        # Override this method in subclasses of this layer in order to set up
+        # WSGI middleware.
+        return app
+
     def testSetUp(self):
         super(BrowserLayer, self).testSetUp()
         wsgi_app = WSGIPublisherApplication(
             self.db, HTTPPublicationRequestFactory, True)
 
         def factory(handle_errors=True):
-            return TestBrowserMiddleware(
-                wsgi_app, self.getRootFolder(), handle_errors)
+            return TestBrowserMiddleware(wsgi_app,
+                                         self.setup_middleware(wsgi_app),
+                                         self.getRootFolder(),
+                                         handle_errors)
 
         for host in TEST_HOSTS:
             wsgi_intercept.add_wsgi_intercept(host, 80, factory)
@@ -201,7 +211,6 @@ class FakeResponse(object):
         return self.response_text
 
     __str__ = getOutput
-
 
 
 def http(string, handle_errors=True):
