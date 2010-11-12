@@ -11,6 +11,8 @@ First, create and register a view to test:
     ...     checker.NamesChecker(['browserDefault', '__call__']),
     ...     )
 
+The `silly middleware` has injected information into the page:
+
     >>> from zope.app.wsgi.testlayer import Browser
     >>> browser = Browser()
     >>> browser.open('http://localhost/index.html')

@@ -89,6 +89,9 @@ class TestBrowserMiddleware(object):
     """
 
     def __init__(self, app, wsgi_stack, root, handle_errors):
+        # Passing in both an app and a WSGI stack may seem like a duplication
+        # but we want to keep a reference to the app that may be arbitrarily
+        # deep in the WSGI stack.
         assert isinstance(handle_errors, bool)
         self.app = app
         self.root = root
