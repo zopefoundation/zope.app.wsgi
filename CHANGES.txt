@@ -6,7 +6,7 @@ CHANGES
 3.9.4 (unreleased)
 ------------------
 
-- Nothing changed yet.
+- Add pluggability for setting up WSGI middleware in testlayer.
 
 
 3.9.3 (2010-10-14)
