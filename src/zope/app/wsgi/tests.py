@@ -23,7 +23,6 @@ from zope.testing import doctest
 from zope.testing import renormalizing
 
 import zope.event
-import zope.publisher.interfaces.browser
 
 import zope.app.wsgi
 from zope.app.wsgi.testlayer import BrowserLayer
