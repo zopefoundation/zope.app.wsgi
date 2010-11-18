@@ -3,8 +3,8 @@ CHANGES
 =======
 
 
-3.9.4 (unreleased)
-------------------
+3.10.0 (2010-11-18)
+-------------------
 
 - Add pluggability for setting up WSGI middleware in testlayer.
 
