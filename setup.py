@@ -1,6 +1,6 @@
 ##############################################################################
 #
-# Copyright (c) 2006 Zope Corporation and Contributors.
+# Copyright (c) 2006 Zope Foundation and Contributors.
 # All Rights Reserved.
 #
 # This software is subject to the provisions of the Zope Public License,
@@ -31,7 +31,7 @@ setup(name='zope.app.wsgi',
           open('README.txt').read() + \
           '\n\n' + \
           open('CHANGES.txt').read(),
-      author='Zope Corporation and Contributors',
+      author='Zope Foundation and Contributors',
       author_email='zope-dev@zope.org',
       classifiers=['Environment :: Web Environment',
                    'Intended Audience :: Developers',
@@ -60,7 +60,7 @@ setup(name='zope.app.wsgi',
           'ZConfig',
           'wsgi_intercept',
           'ZODB3',
-          'zope.app.appsetup >= 3.14.0',
+          'zope.app.appsetup >= 3.14',
           'zope.processlifetime',
           'zope.app.publication',
           'zope.event',
