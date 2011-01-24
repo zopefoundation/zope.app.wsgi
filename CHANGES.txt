@@ -6,7 +6,15 @@ CHANGES
 3.10.1 (unreleased)
 -------------------
 
-- Nothing changed yet.
+- Moved `wsgi_intercept` support to ``zope.testbrowser.wsgi``, thus
+  requiring at least version 3.11 of this package:
+
+  - Moved ``zope.app.wsgi.testlayer.Browser`` to
+    ``zope.testbrowser.wsgi.Browser``, but left BBB import here.
+
+  - Split up ``zope.app.wsgi.testlayer.BrowserLayer`` into generic WSGI
+    browser layer (``zope.testbrowser.wsgi.Layer``) and ZODB/ZOPE specific
+    part (``zope.app.wsgi.testlayer.BrowserLayer`` as before).
 
 
 3.10.0 (2010-11-18)
@@ -18,7 +26,7 @@ CHANGES
 3.9.3 (2010-10-14)
 ------------------
 
-- Python2.7 compatibility for xmlrpc. Transplant of zope.app.testing r116141.
+- Python 2.7 compatibility for xmlrpc. Transplant of zope.app.testing r116141.
 
 
 3.9.2 (2010-05-23)

@@ -17,86 +17,48 @@ import base64
 import httplib
 import xmlrpclib
 
-from transaction import commit
-from wsgi_intercept.mechanize_intercept import Browser as BaseInterceptBrowser
+import transaction
 from zope.app.appsetup.testlayer import ZODBLayer
-from zope.app.publication.httpfactory import HTTPPublicationRequestFactory
 from zope.app.wsgi import WSGIPublisherApplication
-from zope.testbrowser.browser import Browser as ZopeTestbrowser
 import wsgi_intercept
+import zope.testbrowser.wsgi
 
-# List of hostname where the test browser/http function replies to
-TEST_HOSTS = ['localhost', '127.0.0.1']
+# BBB
+from zope.testbrowser.wsgi import Browser
 
-
-class InterceptBrowser(BaseInterceptBrowser):
-
-    default_schemes = ['http']
-    default_others = ['_http_error',
-                      '_http_default_error']
-    default_features = ['_redirect', '_cookies', '_referer', '_refresh',
-                        '_equiv', '_basicauth', '_digestauth']
-
-
-class Browser(ZopeTestbrowser):
-    """Override the zope.testbrowser.browser.Browser interface so that it
-    uses PatchedMechanizeBrowser
-    """
-
-    def __init__(self, *args, **kwargs):
-        kwargs['mech_browser'] = InterceptBrowser()
-        ZopeTestbrowser.__init__(self, *args, **kwargs)
-
-
-# Compatibility helpers to behave like zope.app.testing
-
-basicre = re.compile('Basic (.+)?:(.+)?$')
-
-
-def auth_header(header):
-    """This function takes an authorization HTTP header and encode the
-    couple user, password into base 64 like the HTTP protocol wants
-    it.
-    """
-    match = basicre.match(header)
-    if match:
-        u, p = match.group(1, 2)
-        if u is None:
-            u = ''
-        if p is None:
-            p = ''
-        auth = base64.encodestring('%s:%s' % (u, p))
-        return 'Basic %s' % auth[:-1]
-    return header
-
-
-def is_wanted_header(header):
-    """Return True if the given HTTP header key is unwanted.
-    """
-    key, value = header
-    return key.lower() not in ('x-content-type-warning', 'x-powered-by')
-
-
-class TestBrowserMiddleware(object):
+class TransactionMiddleware(object):
     """This middleware makes the WSGI application compatible with the
     HTTPCaller behavior defined in zope.app.testing.functional:
     - It commits and synchronises the current transaction before and
       after the test.
+
+    """
+    def __init__(self, root_factory, wsgi_stack):
+        # ZODBLayer creates DB in testSetUp method, but the middleware is
+        # set up already in the `setUp` method, so we have only the
+        # `root_factory` not the root itself:
+        self.root_factory = root_factory
+        self.wsgi_stack = wsgi_stack
+
+    def __call__(self, environ, start_response):
+        transaction.commit()
+        for entry in self.wsgi_stack(environ, start_response):
+            yield entry
+        self.root_factory()._p_jar.sync()
+
+
+class HandleErrorsMiddleware(object):
+    """This middleware makes the WSGI application compatible with the
+    HTTPCaller behavior defined in zope.app.testing.functional:
     - It honors the X-zope-handle-errors header in order to support
       zope.testbrowser Browser handleErrors flag.
-    - It modifies the HTTP Authorization header to encode user and
-      password into base 64 if it is Basic authentication.
     """
 
-    def __init__(self, app, wsgi_stack, root, handle_errors):
-        # Passing in both an app and a WSGI stack may seem like a duplication
-        # but we want to keep a reference to the app that may be arbitrarily
-        # deep in the WSGI stack.
-        assert isinstance(handle_errors, bool)
+    default_handle_errors = 'True'
+
+    def __init__(self, app, wsgi_stack):
         self.app = app
-        self.root = root
         self.wsgi_stack = wsgi_stack
-        self.default_handle_errors = str(handle_errors)
 
     def __call__(self, environ, start_response):
         # Handle debug mode
@@ -104,23 +66,11 @@ class TestBrowserMiddleware(object):
             'HTTP_X_ZOPE_HANDLE_ERRORS', self.default_handle_errors)
         self.app.handleErrors = handle_errors == 'True'
 
-        # Handle authorization
-        auth_key = 'HTTP_AUTHORIZATION'
-        if auth_key in environ:
-            environ[auth_key] = auth_header(environ[auth_key])
-
-        # Remove unwanted headers
-        def application_start_response(status, headers, exc_info=None):
-            headers = filter(is_wanted_header, headers)
-            start_response(status, headers)
-
-        commit()
-        for entry in self.wsgi_stack(environ, application_start_response):
+        for entry in self.wsgi_stack(environ, start_response):
             yield entry
-        self.root._p_jar.sync()
 
 
-class BrowserLayer(ZODBLayer):
+class BrowserLayer(zope.testbrowser.wsgi.Layer, ZODBLayer):
     """This create a test layer with a test database and register a wsgi
     application to use that test database.
 
@@ -134,24 +84,24 @@ class BrowserLayer(ZODBLayer):
         # WSGI middleware.
         return app
 
+    def make_wsgi_app(self):
+        # Since the request factory class is only a parameter default of
+        # WSGIPublisherApplication and not easily accessible otherwise, we fake
+        # it into creating a requestFactory instance, so we can read the class
+        # off of that in testSetUp()
+        fake_db = object()
+        self._application = WSGIPublisherApplication(fake_db)
+        return HandleErrorsMiddleware(
+            self._application,
+            TransactionMiddleware(
+                self.getRootFolder,
+                self.setup_middleware(self._application)))
+
     def testSetUp(self):
         super(BrowserLayer, self).testSetUp()
-        wsgi_app = WSGIPublisherApplication(
-            self.db, HTTPPublicationRequestFactory, True)
-
-        def factory(handle_errors=True):
-            return TestBrowserMiddleware(wsgi_app,
-                                         self.setup_middleware(wsgi_app),
-                                         self.getRootFolder(),
-                                         handle_errors)
-
-        for host in TEST_HOSTS:
-            wsgi_intercept.add_wsgi_intercept(host, 80, factory)
-
-    def testTearDown(self):
-        for host in TEST_HOSTS:
-            wsgi_intercept.remove_wsgi_intercept(host, 80)
-        super(BrowserLayer, self).testTearDown()
+        # Tell the publisher to use ZODBLayer's current database
+        factory = type(self._application.requestFactory)
+        self._application.requestFactory = factory(self.db)
 
 
 class NotInBrowserLayer(Exception):
