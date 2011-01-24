@@ -62,6 +62,3 @@ def test_suite():
 
     return unittest.TestSuite((
         filereturns_suite, readme_test, doctest_suite, testlayer_suite))
-
-if __name__ == '__main__':
-    unittest.main(defaultTest='test_suite')
