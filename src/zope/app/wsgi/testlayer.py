@@ -12,8 +12,6 @@
 #
 ##############################################################################
 from StringIO import StringIO
-import re
-import base64
 import httplib
 import xmlrpclib
 
@@ -25,6 +23,7 @@ import zope.testbrowser.wsgi
 
 # BBB
 from zope.testbrowser.wsgi import Browser
+
 
 class TransactionMiddleware(object):
     """This middleware makes the WSGI application compatible with the

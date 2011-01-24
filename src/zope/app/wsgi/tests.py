@@ -30,9 +30,10 @@ def cleanEvents(s):
 def test_suite():
 
     checker = renormalizing.RENormalizing([
-        (re.compile(r"&lt;class 'zope.component.interfaces.ComponentLookupError'&gt;"),
-                    r'ComponentLookupError'),
-    ])
+        (re.compile(
+            r"&lt;class 'zope.component.interfaces.ComponentLookupError'&gt;"),
+         r'ComponentLookupError'),
+        ])
     filereturns_suite = doctest.DocFileSuite('filereturns.txt')
     filereturns_suite.layer = BrowserLayer(zope.app.wsgi)
 
