@@ -11,22 +11,16 @@
 # FOR A PARTICULAR PURPOSE.
 #
 ##############################################################################
-"""WSGI tests
-
-$Id$
-"""
-import unittest
-import re
-
-from zope.component.testlayer import ZCMLFileLayer
-from zope.testing import doctest
-from zope.testing import renormalizing
-
-import zope.event
-
-import zope.app.wsgi
-from zope.app.wsgi.testlayer import BrowserLayer
+"""WSGI tests"""
 from zope.app.wsgi.testing import SillyMiddleWareBrowserLayer
+from zope.app.wsgi.testlayer import BrowserLayer
+from zope.component.testlayer import ZCMLFileLayer
+from zope.testing import renormalizing
+import doctest
+import re
+import unittest
+import zope.app.wsgi
+import zope.event
 
 
 def cleanEvents(s):
