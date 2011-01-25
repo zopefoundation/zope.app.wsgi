@@ -164,7 +164,8 @@ class FakeResponse(object):
 
     __str__ = getOutput
 
-
+# XXX seems to only used by tests of zope.app.publication, maybe it should
+# be moved there
 def http(string, handle_errors=True):
     """This function behave like the HTTPCaller of
     zope.app.testing.functional.
@@ -175,7 +176,11 @@ def http(string, handle_errors=True):
         raise NotInBrowserLayer(NotInBrowserLayer.__doc__)
 
     (app_fn, script_name) = wsgi_intercept._wsgi_intercept[key]
-    app = app_fn(handle_errors=handle_errors)
+    app = app_fn()
+
+    if not string.endswith('\n'):
+        string += '\n'
+    string += 'X-zope-handle-errors: %s\n' % handle_errors
 
     socket = wsgi_intercept.wsgi_fake_socket(app, 'localhost', 80, '')
     socket.sendall(string.lstrip())
