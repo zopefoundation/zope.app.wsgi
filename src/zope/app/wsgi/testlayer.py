@@ -142,11 +142,9 @@ class FakeResponse(object):
 
 
 def http(string, handle_errors=True):
-
-    if string.startswith('\n'):
-        # zope.app.publication tests fail without this. They are a bit
-        # sloppy and have a leadin \n which WebOb rejects.
-        string = string[1:]
+    # Existing tests fail without this. They are a bit sloppy and have
+    # a leading \n which WebOb rejects.
+    string = string.lstrip()
 
     app = zope.testbrowser.wsgi.Layer.get_app()
     if app is None:
