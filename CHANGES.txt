@@ -3,10 +3,10 @@ CHANGES
 =======
 
 
-3.12.1 (unreleased)
+3.13.0 (unreleased)
 -------------------
 
-- Nothing changed yet.
+- Update to zope.testbrowser 4.0.0 which uses WebTest instead of wsgi_intercept.
 
 
 3.12.0 (2011-01-25)
