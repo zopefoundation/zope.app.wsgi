@@ -18,8 +18,8 @@ import xmlrpclib
 import transaction
 from zope.app.appsetup.testlayer import ZODBLayer
 from zope.app.wsgi import WSGIPublisherApplication
-import wsgi_intercept
 import zope.testbrowser.wsgi
+from webtest import TestRequest
 
 # BBB
 from zope.testbrowser.wsgi import Browser
@@ -46,36 +46,12 @@ class TransactionMiddleware(object):
         self.root_factory()._p_jar.sync()
 
 
-class HandleErrorsMiddleware(object):
-    """This middleware makes the WSGI application compatible with the
-    HTTPCaller behavior defined in zope.app.testing.functional:
-    - It honors the X-zope-handle-errors header in order to support
-      zope.testbrowser Browser handleErrors flag.
-    """
-
-    default_handle_errors = 'True'
-
-    def __init__(self, app, wsgi_stack):
-        self.app = app
-        self.wsgi_stack = wsgi_stack
-
-    def __call__(self, environ, start_response):
-        # Handle debug mode
-        handle_errors = environ.get(
-            'HTTP_X_ZOPE_HANDLE_ERRORS', self.default_handle_errors)
-        self.app.handleErrors = handle_errors == 'True'
-
-        for entry in self.wsgi_stack(environ, start_response):
-            yield entry
-
-
 class BrowserLayer(zope.testbrowser.wsgi.Layer, ZODBLayer):
     """This create a test layer with a test database and register a wsgi
     application to use that test database.
 
-    A wsgi_intercept handler is installed as well, so you can use a
-    WSGI version of zope.testbrowser Browser instance to access the
-    application.
+    You can use a WSGI version of zope.testbrowser Browser instance to access
+    the application.
     """
 
     def setup_middleware(self, app):
@@ -90,8 +66,7 @@ class BrowserLayer(zope.testbrowser.wsgi.Layer, ZODBLayer):
         # off of that in testSetUp()
         fake_db = object()
         self._application = WSGIPublisherApplication(fake_db)
-        return HandleErrorsMiddleware(
-            self._application,
+        return zope.testbrowser.wsgi.AuthorizationMiddleware(
             TransactionMiddleware(
                 self.getRootFolder,
                 self.setup_middleware(self._application)))
@@ -114,78 +89,43 @@ class FakeResponse(object):
     zope.app.testing.functional.
     """
 
-    def __init__(self, response_text):
-        self.response_text = response_text
+    def __init__(self, response):
+        self.response = response
 
     def getStatus(self):
-        line = self.getStatusString()
-        status, rest = line.split(' ', 1)
-        return int(status)
+        return self.response.status_int
 
     def getStatusString(self):
-        status_line = self.response_text.split('\n', 1)[0]
-        protocol, status_string = status_line.split(' ', 1)
-        return status_string
+        return self.response.status
 
     def getHeader(self, name, default=None):
-        without_body = self.response_text.split('\n\n', 1)[0]
-        headers_text = without_body.split('\n', 1)[1]
-        headers = headers_text.split('\n')
-        result = []
-        for header in headers:
-            header_name, header_value = header.split(': ', 1)
-            if name == header_name:
-                result.append(header_value)
-        if not result:
-            return default
-        elif len(result) == 1:
-            return result[0]
-        else:
-            return result
+        return self.response.headers.get(name, default)
 
     def getHeaders(self):
-        without_body = self.response_text.split('\n\n', 1)[0]
-        headers_text = without_body.split('\n', 1)[1]
-        headers = headers_text.split('\n')
-        result = []
-        for header in headers:
-            header_name, header_value = header.split(':', 1)
-            result.append((header_name, header_value))
-        return result
+        return self.response.headerlist
 
     def getBody(self):
-        parts = self.response_text.split('\n\n', 1)
-        if len(parts) < 2:
-            return ''
-        return parts[1]
+        return self.response.body
 
     def getOutput(self):
-        return self.response_text
+        parts = ['HTTP/1.0 ' + self.response.status]
+        parts += map('%s: %s'.__mod__, self.response.headerlist)
+        if self.response.body:
+            parts += ['', self.response.body]
+        return '\n'.join(parts)
 
     __str__ = getOutput
 
-# XXX seems to only used by tests of zope.app.publication, maybe it should
-# be moved there
-def http(string, handle_errors=True):
-    """This function behave like the HTTPCaller of
-    zope.app.testing.functional.
-    """
-    key = ('localhost', 80)
 
-    if key not in wsgi_intercept._wsgi_intercept:
+def http(string, handle_errors=True):
+    app = zope.testbrowser.wsgi.Layer.get_app()
+    if app is None:
         raise NotInBrowserLayer(NotInBrowserLayer.__doc__)
 
-    (app_fn, script_name) = wsgi_intercept._wsgi_intercept[key]
-    app = app_fn()
-
-    if not string.endswith('\n'):
-        string += '\n'
-    string += 'X-zope-handle-errors: %s\n' % handle_errors
-
-    socket = wsgi_intercept.wsgi_fake_socket(app, 'localhost', 80, '')
-    socket.sendall(string.lstrip())
-    result = socket.makefile()
-    return FakeResponse(result.getvalue())
+    request = TestRequest.from_file(StringIO(string))
+    request.environ['wsgi.handleErrors'] = handle_errors
+    response = request.get_response(app)
+    return FakeResponse(response)
 
 
 class FakeSocket(object):

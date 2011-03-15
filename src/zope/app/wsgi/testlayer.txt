@@ -10,6 +10,12 @@ First, create and register a view to test:
     ...     IndexView,
     ...     checker.NamesChecker(['browserDefault', '__call__']),
     ...     )
+    >>> from zope.app.wsgi.testing import ErrorRaisingView
+    >>> component.provideAdapter(ErrorRaisingView, name='error.html')
+    >>> checker.defineChecker(
+    ...     ErrorRaisingView,
+    ...     checker.NamesChecker(['browserDefault', '__call__']),
+    ...     )
 
 The `silly middleware` has injected information into the page:
 
@@ -25,6 +31,33 @@ The `silly middleware` has injected information into the page:
       </body>
     </html>
 
+The default behavior of the browser is to handle errors::
+
+    >>> browser.open('http://localhost/error.html')
+    Traceback (most recent call last):
+    ...
+    HTTPError: HTTP Error 500: Internal Server Error
+
+One can set error handling behavior::
+
+    >>> browser.handleErrors = False
+    >>> browser.open('http://localhost/error.html')
+    Traceback (most recent call last):
+    ...
+    ZeroDivisionError: integer division or modulo by zero
+
+The http caller is more low level than the Browser.
+It exposes the same error handling parameter::
+
+    >>> from zope.app.wsgi.testlayer import http
+    >>> response = http('GET /error.html HTTP/1.1')
+    >>> response.getStatus() == 500
+    True
+    >>> http('GET /error.html HTTP/1.1', handle_errors=False)
+    Traceback (most recent call last):
+    ...
+    ZeroDivisionError: integer division or modulo by zero
+
 Clean up:
 
     >>> import zope.publisher.interfaces.browser
@@ -35,4 +68,12 @@ Clean up:
     ...     zope.publisher.interfaces.browser.IBrowserRequest),
     ...     zope.publisher.interfaces.browser.IBrowserPublisher,
     ...     'index.html',
+    ...     )
+    >>> checker.undefineChecker(ErrorRaisingView)
+    >>> component.provideAdapter(
+    ...     None,
+    ...     (interface.Interface,
+    ...     zope.publisher.interfaces.browser.IBrowserRequest),
+    ...     zope.publisher.interfaces.browser.IBrowserPublisher,
+    ...     'error.html',
     ...     )

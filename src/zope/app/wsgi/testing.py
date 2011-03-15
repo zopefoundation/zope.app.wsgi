@@ -54,6 +54,9 @@ class IndexView(FileView):
               </body>
             </html>'''
 
+class ErrorRaisingView(FileView):
+    def __call__(self):
+        return 1/0
 
 class SillyMiddleWare(object):
     def __init__(self, application):
