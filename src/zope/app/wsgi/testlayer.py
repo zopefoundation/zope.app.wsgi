@@ -46,29 +46,6 @@ class TransactionMiddleware(object):
         self.root_factory()._p_jar.sync()
 
 
-class HandleErrorsMiddleware(object):
-    """This middleware makes the WSGI application compatible with the
-    HTTPCaller behavior defined in zope.app.testing.functional:
-    - It honors the X-zope-handle-errors header in order to support
-      zope.testbrowser Browser handleErrors flag.
-    """
-
-    default_handle_errors = 'True'
-
-    def __init__(self, app, wsgi_stack):
-        self.app = app
-        self.wsgi_stack = wsgi_stack
-
-    def __call__(self, environ, start_response):
-        # Handle debug mode
-        handle_errors = environ.get(
-            'HTTP_X_ZOPE_HANDLE_ERRORS', self.default_handle_errors)
-        self.app.handleErrors = handle_errors == 'True'
-
-        for entry in self.wsgi_stack(environ, start_response):
-            yield entry
-
-
 class BrowserLayer(zope.testbrowser.wsgi.Layer, ZODBLayer):
     """This create a test layer with a test database and register a wsgi
     application to use that test database.
@@ -89,11 +66,10 @@ class BrowserLayer(zope.testbrowser.wsgi.Layer, ZODBLayer):
         # off of that in testSetUp()
         fake_db = object()
         self._application = WSGIPublisherApplication(fake_db)
-        return zope.testbrowser.wsgi.AuthorizationMiddleware(HandleErrorsMiddleware(
-            self._application,
+        return zope.testbrowser.wsgi.AuthorizationMiddleware(
             TransactionMiddleware(
                 self.getRootFolder,
-                self.setup_middleware(self._application))))
+                self.setup_middleware(self._application)))
 
     def testSetUp(self):
         super(BrowserLayer, self).testSetUp()
@@ -142,17 +118,12 @@ class FakeResponse(object):
 
 
 def http(string, handle_errors=True):
-    # Existing tests fail without this. They are a bit sloppy and have
-    # a leading \n which WebOb rejects.
-    string = string.lstrip()
-
     app = zope.testbrowser.wsgi.Layer.get_app()
     if app is None:
         raise NotInBrowserLayer(NotInBrowserLayer.__doc__)
 
     request = TestRequest.from_file(StringIO(string))
-    request.headers['X-zope-handle-errors'] = str(handle_errors)
-
+    request.environ['wsgi.handleErrors'] = handle_errors
     response = request.get_response(app)
     return FakeResponse(response)
 
