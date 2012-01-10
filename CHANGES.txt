@@ -3,10 +3,17 @@ CHANGES
 =======
 
 
-3.13.1 (unreleased)
+3.14.0 (2012-01-10)
 -------------------
 
-- Nothing changed yet.
+- Set the WSGI environment's ``REMOTE_USER`` item (if not already set)
+  with the Zope principal label. (This is the same data set in
+  the ``wsgi.logging_info`` environment item.)
+
+  This change allows user info to be used by `paste.translogger
+  <http://pythonpaste.org/modules/translogger.html>`_ middleware (or
+  any similar middleware that uses ``REMOTE_USER``), which provides
+  access logging.
 
 
 3.13.0 (2011-03-15)

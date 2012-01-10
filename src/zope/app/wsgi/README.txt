@@ -104,9 +104,28 @@ This logging information is provided by an adapter registered for
 `ILoggingInfo`. Out-of-the-box, `zope.publisher` registers a base
 adapter that returns the principal id as value::
 
-  >>> print environ
-  {'wsgi.input': <cStringIO.StringI object at ...>,
-   'wsgi.logging_info': 'zope.anybody', 'PATH_INFO': '/'}
+  >>> from pprint import pprint
+  >>> pprint(environ)
+  {'PATH_INFO': '/',
+   'REMOTE_USER': 'zope.anybody',
+   'wsgi.input': <cStringIO.StringI object at ...>,
+   'wsgi.logging_info': 'zope.anybody'}
+
+.. edge case
+
+   If remote user is already set, don't update it:
+
+    >>> environ = {
+    ...     'PATH_INFO': '/',
+    ...     'REMOTE_USER': 'someoneelse',
+    ...     'wsgi.input': cStringIO.StringIO('')}
+
+    >>> _ = list(app(environ, start_response))
+    >>> pprint(environ)
+    {'PATH_INFO': '/',
+     'REMOTE_USER': 'someoneelse',
+     'wsgi.input': <cStringIO.StringI object at ...>,
+     'wsgi.logging_info': 'zope.anybody'}
 
 
 Creating A WSGI Application
