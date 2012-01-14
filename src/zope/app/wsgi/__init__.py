@@ -65,6 +65,8 @@ class WSGIPublisherApplication(object):
         else:
             message = logging_info.getLogMessage()
         environ['wsgi.logging_info'] = message
+        if 'REMOTE_USER' not in environ:
+            environ['REMOTE_USER'] = message
 
         # Start the WSGI server response
         start_response(response.getStatusString(), response.getHeaders())
