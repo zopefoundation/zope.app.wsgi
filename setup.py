@@ -23,7 +23,7 @@ $Id$
 from setuptools import setup, find_packages
 
 setup(name='zope.app.wsgi',
-      version='3.9.3',
+      version='3.9.3zc1',
       url='http://pypi.python.org/pypi/zope.app.wsgi',
       license='ZPL 2.1',
       description='WSGI application for the zope.publisher',
