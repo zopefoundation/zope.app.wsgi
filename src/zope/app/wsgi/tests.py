@@ -97,15 +97,52 @@ Clean up:
     ...     'test-file-view.html',
     ...     )
 
-
 """
+
+def creating_app_w_paste_emits_ProcessStarting_event():
+    """
+    >>> import zope.event
+    >>> events = []
+    >>> subscriber = events.append
+    >>> zope.event.subscribers.append(subscriber)
+
+    >>> import os, tempfile
+    >>> temp_dir = tempfile.mkdtemp()
+    >>> sitezcml = os.path.join(temp_dir, 'site.zcml')
+    >>> open(sitezcml, 'w').write('<configure />')
+    >>> zopeconf = os.path.join(temp_dir, 'zope.conf')
+    >>> open(zopeconf, 'w').write('''
+    ... site-definition %s
+    ...
+    ... <zodb>
+    ...   <mappingstorage />
+    ... </zodb>
+    ...
+    ... <eventlog>
+    ...   <logfile>
+    ...     path STDOUT
+    ...   </logfile>
+    ... </eventlog>
+    ... ''' % sitezcml)
+
+    >>> import zope.app.wsgi.paste, zope.processlifetime
+    >>> app = zope.app.wsgi.paste.ZopeApplication(
+    ...     {}, zopeconf, handle_errors=False)
+
+    >>> len([e for e in events
+    ...     if isinstance(e, zope.processlifetime.ProcessStarting)]) == 1
+    True
+
+    >>> zope.event.subscribers.remove(subscriber)
+    """
 
 def test_suite():
 
     checker = renormalizing.RENormalizing([
-        (re.compile(r"&lt;class 'zope.component.interfaces.ComponentLookupError'&gt;"),
-                    r'ComponentLookupError'),
-    ])
+        (re.compile(
+            r"&lt;class 'zope.component.interfaces.ComponentLookupError'&gt;"),
+         r'ComponentLookupError'),
+        ])
     functional_suite = doctest.DocTestSuite()
     functional_suite.layer = AppWSGILayer
 

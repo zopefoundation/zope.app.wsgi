@@ -16,6 +16,8 @@
 $Id$
 """
 from zope.app.wsgi import getWSGIApplication
+import zope.event
+import zope.processlifetime
 
 def asbool(obj):
     if isinstance(obj, basestring):
@@ -28,4 +30,6 @@ def asbool(obj):
 
 def ZopeApplication(global_config, config_file, handle_errors=True, **options):
     handle_errors = asbool(handle_errors)
-    return getWSGIApplication(config_file, handle_errors=handle_errors)
+    app = getWSGIApplication(config_file, handle_errors=handle_errors)
+    zope.event.notify(zope.processlifetime.ProcessStarting())
+    return app

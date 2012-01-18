@@ -3,6 +3,12 @@ CHANGES
 =======
 
 
+3.9.3zc2 (2012-01-18)
+---------------------
+
+- Fixed: zope.app.wsgi.paste.ZopeApplication didn't emit
+  ProcessStarting events.
+
 3.9.3zc1 (2012-01-14)
 ---------------------
 
