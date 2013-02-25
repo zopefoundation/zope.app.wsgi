@@ -23,9 +23,11 @@ import zope.publisher.http
 from zope.publisher.interfaces.http import IResult
 from zope.security.proxy import removeSecurityProxy
 
+from zope.app.wsgi._compat import FileType
 
+
+@interface.implementer(IResult)
 class FallbackWrapper:
-    interface.implements(IResult)
 
     def __init__(self, f):
         self.close = f.close
@@ -41,7 +43,7 @@ class FallbackWrapper:
                 break
 
 
-@component.adapter(file, zope.publisher.interfaces.http.IHTTPRequest)
+@component.adapter(FileType, zope.publisher.interfaces.http.IHTTPRequest)
 @interface.implementer(zope.publisher.http.IResult)
 def FileResult(f, request):
     f = removeSecurityProxy(f)
@@ -65,7 +67,7 @@ def FileResult(f, request):
 _tfile = tempfile.TemporaryFile()
 _tfile.close()
 _tfile = _tfile.__class__
-if _tfile is file:
+if issubclass(_tfile, FileType):
     # need a fake one. Sigh
     class _tfile:
         pass

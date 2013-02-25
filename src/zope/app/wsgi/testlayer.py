@@ -11,18 +11,20 @@
 # FOR A PARTICULAR PURPOSE.
 #
 ##############################################################################
-from StringIO import StringIO
-import httplib
-import xmlrpclib
+from io import BytesIO
+import base64
+import re
 
 import transaction
 from zope.app.appsetup.testlayer import ZODBLayer
 from zope.app.wsgi import WSGIPublisherApplication
-import zope.testbrowser.wsgi
+#import zope.testbrowser.wsgi
 from webtest import TestRequest
 
 # BBB
-from zope.testbrowser.wsgi import Browser
+#from zope.testbrowser.wsgi import Browser
+
+from zope.app.wsgi._compat import httpclient, xmlrpcclient
 
 
 class TransactionMiddleware(object):
@@ -46,7 +48,100 @@ class TransactionMiddleware(object):
         self.root_factory()._p_jar.sync()
 
 
-class BrowserLayer(zope.testbrowser.wsgi.Layer, ZODBLayer):
+basicre = re.compile('Basic (.+)?:(.+)?$')
+
+
+def auth_header(header):
+    """This function takes an authorization HTTP header and encode the
+    couple user, password into base 64 like the HTTP protocol wants
+    it.
+    """
+    match = basicre.match(header)
+    if match:
+        u, p = match.group(1, 2)
+        if u is None:
+            u = ''
+        if p is None:
+            p = ''
+        plain = '%s:%s' % (u, p)
+        auth = base64.encodestring(plain.encode('utf-8'))
+        return 'Basic %s' % str(auth.rstrip().decode('latin1'))
+    return header
+
+
+def is_wanted_header(header):
+    """Return True if the given HTTP header key is wanted.
+    """
+    key, value = header
+    return key.lower() not in ('x-content-type-warning', 'x-powered-by')
+
+
+class AuthorizationMiddleware(object):
+    """This middleware makes the WSGI application compatible with the
+    HTTPCaller behavior defined in zope.app.testing.functional:
+    - It modifies the HTTP Authorization header to encode user and
+      password into base64 if it is Basic authentication.
+    """
+
+    def __init__(self, wsgi_stack):
+        self.wsgi_stack = wsgi_stack
+
+    def __call__(self, environ, start_response):
+        # Handle authorization
+        auth_key = 'HTTP_AUTHORIZATION'
+        if auth_key in environ:
+            environ[auth_key] = auth_header(environ[auth_key])
+
+        # Remove unwanted headers
+        def application_start_response(status, headers, exc_info=None):
+            headers = filter(is_wanted_header, headers)
+            start_response(status, headers)
+
+        for entry in self.wsgi_stack(environ, application_start_response):
+            yield entry
+
+
+_APP_UNDER_TEST = None # setup and torn down by the Layer class
+
+# This is a copy of zope.testbrowser.wsgi.Layer, made to drop dependency on
+# zope.testbrowser, that, in turn depends on non python-3 compatible mechanize.
+class WSGILayer(object):
+    """Test layer which sets up WSGI application for use with
+    WebTest/testbrowser.
+
+    """
+
+    __bases__ = ()
+    __name__ = 'Layer'
+
+    @classmethod
+    def get_app(cls):
+        return _APP_UNDER_TEST
+
+    def make_wsgi_app(self):
+        # Override this method in subclasses of this layer in order to set up
+        # the WSGI application.
+        raise NotImplementedError
+
+    def cooperative_super(self, method_name):
+        # Calling `super` for multiple inheritance:
+        method = getattr(super(WSGILayer, self), method_name, None)
+        if method is not None:
+            method()
+
+    def setUp(self):
+        self.cooperative_super('setUp')
+        global _APP_UNDER_TEST
+        if _APP_UNDER_TEST is not None:
+            raise AssertionError("Already Setup")
+        _APP_UNDER_TEST = self.make_wsgi_app()
+
+    def tearDown(self):
+        global _APP_UNDER_TEST
+        _APP_UNDER_TEST = None
+        self.cooperative_super('tearDown')
+
+class BrowserLayer(WSGILayer, ZODBLayer):
     """This create a test layer with a test database and register a wsgi
     application to use that test database.
 
@@ -66,7 +161,7 @@ class BrowserLayer(zope.testbrowser.wsgi.Layer, ZODBLayer):
         # off of that in testSetUp()
         fake_db = object()
         self._application = WSGIPublisherApplication(fake_db)
-        return zope.testbrowser.wsgi.AuthorizationMiddleware(
+        return AuthorizationMiddleware(
             TransactionMiddleware(
                 self.getRootFolder,
                 self.setup_middleware(self._application)))
@@ -102,27 +197,32 @@ class FakeResponse(object):
         return self.response.headers.get(name, default)
 
     def getHeaders(self):
-        return self.response.headerlist
+        return sorted(self.response.headerlist)
 
     def getBody(self):
         return self.response.body
 
     def getOutput(self):
-        parts = ['HTTP/1.0 ' + self.response.status]
-        parts += map('%s: %s'.__mod__, self.response.headerlist)
-        if self.response.body:
-            parts += ['', self.response.body]
-        return '\n'.join(parts)
+        parts = [b'HTTP/1.0 ' + self.response.status.encode('latin1')]
+        parts += [('%s: %s' % h).encode('latin1') for h in self.getHeaders()]
 
-    __str__ = getOutput
+        body = self.response.body
+        if body:
+            if not isinstance(body, bytes):
+                body = body.encode('utf-8')
+            parts += [b'', body]
+        return b'\n'.join(parts)
 
+    def __str__(self):
+        out = self.getOutput()
+        return out.decode('latin1')
 
 def http(string, handle_errors=True):
-    app = zope.testbrowser.wsgi.Layer.get_app()
+    app = WSGILayer.get_app()
     if app is None:
         raise NotInBrowserLayer(NotInBrowserLayer.__doc__)
 
-    request = TestRequest.from_file(StringIO(string))
+    request = TestRequest.from_file(BytesIO(string))
     request.environ['wsgi.handleErrors'] = handle_errors
     response = request.get_response(app)
     return FakeResponse(response)
@@ -134,11 +234,11 @@ class FakeSocket(object):
         self.data = data
 
     def makefile(self, mode, bufsize=None):
-        return StringIO(self.data)
+        return BytesIO(self.data)
 
 
-class XMLRPCTestTransport(xmlrpclib.Transport):
-    """xmlrpclib transport that delegates to http().
+class XMLRPCTestTransport(xmlrpcclient.Transport):
+    """xmlrpc.client lib transport that delegates to http().
 
     It can be used like a normal transport, including support for basic
     authentication.
@@ -167,13 +267,13 @@ class XMLRPCTestTransport(xmlrpclib.Transport):
         headers = response.getHeaders()
 
         if errcode != 200:
-            raise xmlrpclib.ProtocolError(
+            raise xmlrpcclient.ProtocolError(
                 host + handler,
                 errcode, errmsg,
                 headers
                 )
 
-        res = httplib.HTTPResponse(FakeSocket(response.getBody()))
+        res = httpclient.HTTPResponse(FakeSocket(response.getBody()))
         res.begin()
         return self.parse_response(res)
 
@@ -188,4 +288,4 @@ def XMLRPCServerProxy(uri, transport=None, encoding=None,
         transport = XMLRPCTestTransport()
     if isinstance(transport, XMLRPCTestTransport):
         transport.handleErrors = handleErrors
-    return xmlrpclib.ServerProxy(uri, transport, encoding, verbose, allow_none)
+    return xmlrpcclient.ServerProxy(uri, transport, encoding, verbose, allow_none)

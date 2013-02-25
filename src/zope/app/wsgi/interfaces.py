@@ -81,8 +81,8 @@ class IWSGIPublisherApplicationCreatedEvent(zope.interface.Interface):
     application = zope.interface.Attribute("The WSGI application.")
 
 
+@zope.interface.implementer(IWSGIPublisherApplicationCreatedEvent)
 class WSGIPublisherApplicationCreated(object):
-    zope.interface.implements(IWSGIPublisherApplicationCreatedEvent)
 
     def __init__(self, application):
         self.application = application
