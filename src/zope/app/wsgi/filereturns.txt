@@ -12,7 +12,7 @@ nothing bad happens. :)
     ...     checker.NamesChecker(['browserDefault', '__call__']),
     ...     )
 
-    >>> from zope.app.wsgi.testlayer import Browser
+    >>> from zope.testbrowser.wsgi import Browser
     >>> browser = Browser()
     >>> browser.handleErrors = False
     >>> browser.open('http://localhost/@@test-file-view.html')

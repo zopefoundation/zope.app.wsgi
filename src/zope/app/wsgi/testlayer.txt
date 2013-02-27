@@ -19,7 +19,7 @@ First, create and register a view to test:
 
 The `silly middleware` has injected information into the page:
 
-    >>> from zope.app.wsgi.testlayer import Browser
+    >>> from zope.testbrowser.wsgi import Browser
     >>> browser = Browser()
     >>> browser.open('http://localhost/index.html')
     >>> print browser.contents

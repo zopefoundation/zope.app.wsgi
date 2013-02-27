@@ -36,9 +36,9 @@ def creating_app_w_paste_emits_ProcessStarting_event():
     >>> import os, tempfile
     >>> temp_dir = tempfile.mkdtemp()
     >>> sitezcml = os.path.join(temp_dir, 'site.zcml')
-    >>> open(sitezcml, 'w').write('<configure />')
+    >>> written = open(sitezcml, 'w').write('<configure />')
     >>> zopeconf = os.path.join(temp_dir, 'zope.conf')
-    >>> open(zopeconf, 'w').write('''
+    >>> wrotten = open(zopeconf, 'w').write('''
     ... site-definition %s
     ...
     ... <zodb>
@@ -65,35 +65,46 @@ def creating_app_w_paste_emits_ProcessStarting_event():
 
 def test_suite():
 
+    suites = []
     checker = renormalizing.RENormalizing([
         (re.compile(
             r"&lt;class 'zope.component.interfaces.ComponentLookupError'&gt;"),
          r'ComponentLookupError'),
         ])
-    filereturns_suite = doctest.DocFileSuite('filereturns.txt')
-    filereturns_suite.layer = BrowserLayer(zope.app.wsgi)
+
+    from zope.testbrowser.browser import HAVE_MECHANIZE
+    if HAVE_MECHANIZE:
+        # Until mechanize is not available for python 3, do not run this test
+        filereturns_suite = doctest.DocFileSuite('filereturns.txt')
+        filereturns_suite.layer = BrowserLayer(zope.app.wsgi)
+        suites.append(filereturns_suite)
+
     dt_suite = doctest.DocTestSuite()
     dt_suite.layer = BrowserLayer(zope.app.wsgi)
+    suites.append(dt_suite)
 
     readme_test = doctest.DocFileSuite(
             'README.txt',
             checker=checker, tearDown=cleanEvents,
             optionflags=doctest.NORMALIZE_WHITESPACE | doctest.ELLIPSIS)
+    readme_test.layer = ZCMLFileLayer(zope.app.wsgi)
+    suites.append(readme_test)
+
 
     doctest_suite = doctest.DocFileSuite(
             'fileresult.txt', 'paste.txt',
             checker=checker,
             optionflags=doctest.NORMALIZE_WHITESPACE | doctest.ELLIPSIS)
-
-    readme_test.layer = ZCMLFileLayer(zope.app.wsgi)
     doctest_suite.layer = ZCMLFileLayer(zope.app.wsgi)
+    suites.append(doctest_suite)
 
-    testlayer_suite = doctest.DocFileSuite(
-            'testlayer.txt',
-            optionflags=doctest.NORMALIZE_WHITESPACE)
-    testlayer_suite.layer = SillyMiddleWareBrowserLayer(zope.app.wsgi)
 
-    return unittest.TestSuite((
-        filereturns_suite, readme_test, doctest_suite, testlayer_suite,
-        dt_suite,
-        ))
+    if HAVE_MECHANIZE:
+        # Until mechanize is not available for python 3, do not run this test
+        testlayer_suite = doctest.DocFileSuite(
+                'testlayer.txt',
+                optionflags=doctest.NORMALIZE_WHITESPACE)
+        testlayer_suite.layer = SillyMiddleWareBrowserLayer(zope.app.wsgi)
+        suites.append(testlayer_suite)
+
+    return unittest.TestSuite(suites)

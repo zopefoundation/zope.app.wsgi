@@ -26,10 +26,10 @@ which the output data can be written.
 Even though this is commonly done by the server, we now have to create an
 appropriate environment for the request.
 
-  >>> import cStringIO
+  >>> import io
   >>> environ = {
   ...     'PATH_INFO': '/',
-  ...     'wsgi.input': cStringIO.StringIO('')}
+  ...     'wsgi.input': io.BytesIO(b'')}
 
 Next we create a WSGI-compliant ``start_response()`` method that accepts the
 status of the response to the HTTP request and the headers that are part of
@@ -46,7 +46,7 @@ and return ``None`` as the write method.
 
 Now we can send the fabricated HTTP request to the application for processing:
 
-  >>> print ''.join(app(environ, start_response))
+  >>> print(b''.join(app(environ, start_response)).decode('utf-8'))
   <html><head><title>SystemError</title></head>
   <body><h2>SystemError</h2>
   A server error occurred.
@@ -108,7 +108,7 @@ adapter that returns the principal id as value::
   >>> pprint(environ)
   {'PATH_INFO': '/',
    'REMOTE_USER': 'zope.anybody',
-   'wsgi.input': <cStringIO.StringI object at ...>,
+   'wsgi.input': <...BytesIO object at ...>,
    'wsgi.logging_info': 'zope.anybody'}
 
 .. edge case
@@ -118,13 +118,13 @@ adapter that returns the principal id as value::
     >>> environ = {
     ...     'PATH_INFO': '/',
     ...     'REMOTE_USER': 'someoneelse',
-    ...     'wsgi.input': cStringIO.StringIO('')}
+    ...     'wsgi.input': io.BytesIO(b'')}
 
     >>> _ = list(app(environ, start_response))
     >>> pprint(environ)
     {'PATH_INFO': '/',
      'REMOTE_USER': 'someoneelse',
-     'wsgi.input': <cStringIO.StringI object at ...>,
+     'wsgi.input': <...BytesIO object at ...>,
      'wsgi.logging_info': 'zope.anybody'}
 
 
@@ -143,10 +143,9 @@ example:
   >>> import os, tempfile
   >>> temp_dir = tempfile.mkdtemp()
   >>> sitezcml = os.path.join(temp_dir, 'site.zcml')
-  >>> open(sitezcml, 'w').write('<configure />')
+  >>> written = open(sitezcml, 'w').write('<configure />')
 
-  >>> from cStringIO import StringIO
-  >>> configFile = StringIO('''
+  >>> configFile = io.StringIO('''
   ... site-definition %s
   ...
   ... <zodb>
@@ -189,7 +188,7 @@ Create an WSGI application.
 The product configs were parsed:
 
   >>> import zope.app.appsetup.product as zapp
-  >>> print zapp.getProductConfiguration('sample')
+  >>> print(zapp.getProductConfiguration('sample'))
   {'key1': 'val1'}
 
   >>> import shutil

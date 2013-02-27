@@ -34,6 +34,11 @@ from zope.app.publication.httpfactory import HTTPPublicationRequestFactory
 from zope.app.wsgi import interfaces
 
 
+from zope.app.wsgi._compat import PYTHON3
+
+if PYTHON3:
+    basestring = (str, bytes)
+
 @implementer(interfaces.IWSGIApplication)
 class WSGIPublisherApplication(object):
     """A WSGI application implementation for the zope publisher

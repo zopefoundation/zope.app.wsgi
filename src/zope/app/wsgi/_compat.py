@@ -30,4 +30,3 @@ else:
     import http.client as httpclient
     from io import IOBase
     FileType = IOBase
-

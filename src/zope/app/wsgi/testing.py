@@ -23,9 +23,8 @@ import zope.publisher.interfaces.browser
 from zope.app.wsgi.testlayer import BrowserLayer
 
 
+@interface.implementer(zope.publisher.interfaces.browser.IBrowserPublisher)
 class FileView:
-
-    interface.implements(zope.publisher.interfaces.browser.IBrowserPublisher)
     component.adapts(interface.Interface,
                      zope.publisher.interfaces.browser.IBrowserRequest)
 

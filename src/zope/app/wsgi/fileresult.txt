@@ -16,17 +16,17 @@ Lets look at an example with a regular file object:
     >>> component.provideAdapter(zope.app.wsgi.fileresult.TemporaryFileResult)
 
     >>> import tempfile
-    >>> dir = tempfile.mkdtemp()
+    >>> tdir = tempfile.mkdtemp()
     >>> import os
-    >>> f = open(os.path.join(dir, 'f'), 'w+b')
-    >>> f.write('One\nTwo\nThree\nHa ha! I love to count!\n')
+    >>> f = open(os.path.join(tdir, 'f'), 'w+b')
+    >>> written = f.write(b'One\nTwo\nThree\nHa ha! I love to count!\n')
     >>> from zope.security.checker import ProxyFactory
     >>> from zope.publisher.interfaces.http import IResult
     >>> from zope.publisher.browser import TestRequest
     >>> request = TestRequest()
     >>> result = component.getMultiAdapter((ProxyFactory(f), request), IResult)
     >>> for line in result:
-    ...     print line
+    ...     print(line)
     One
     Two
     Three
@@ -87,9 +87,9 @@ You can suppress this behavior by setting the content length yourself:
 
     >>> request = TestRequest()
     >>> request.response.setHeader('content-length', '10')
-    >>> f.seek(7)
+    >>> _s = f.seek(7)
     >>> result = component.getMultiAdapter((ProxyFactory(t), request), IResult)
-    >>> print f.tell()
+    >>> print(f.tell())
     7
 
     >>> request.response.getHeader('content-length')
