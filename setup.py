@@ -17,13 +17,11 @@
 # Zope Toolkit policies as described by this documentation.
 ##############################################################################
 """Setup for zope.app.wsgi package
-
-$Id$
 """
 from setuptools import setup, find_packages
 
 setup(name='zope.app.wsgi',
-      version='3.15.1dev',
+      version='4.0.0a1.dev',
       url='http://pypi.python.org/pypi/zope.app.wsgi',
       license='ZPL 2.1',
       description='WSGI application for the zope.publisher',
