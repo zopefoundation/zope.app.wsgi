@@ -9,4 +9,5 @@ src/*.egg-info
 bin
 build
 develop-eggs
+dist
 parts

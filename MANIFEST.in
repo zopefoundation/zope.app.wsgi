@@ -1,5 +1,12 @@
+include *.rst
 include *.txt
-include bootstrap.py
+include *.py
 include buildout.cfg
-include MANIFEST.in
-recursive-include src *.zcml *.txt
+include tox.ini
+
+recursive-include src *
+
+global-exclude *.pyc
+global-exclude *.so
+global-exclude *.dll
+
