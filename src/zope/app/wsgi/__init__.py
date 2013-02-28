@@ -34,9 +34,9 @@ from zope.app.publication.httpfactory import HTTPPublicationRequestFactory
 from zope.app.wsgi import interfaces
 
 
-from zope.app.wsgi._compat import PYTHON3
+from zope.app.wsgi._compat import PYTHON2
 
-if PYTHON3:
+if not PYTHON2:
     basestring = (str, bytes)
 
 @implementer(interfaces.IWSGIApplication)
@@ -71,6 +71,11 @@ class WSGIPublisherApplication(object):
             message = '-'
         else:
             message = logging_info.getLogMessage()
+
+        if not PYTHON2:
+            # In python 3, convert message bytes to native string
+            message = message.decode('latin1')
+
         environ['wsgi.logging_info'] = message
         if 'REMOTE_USER' not in environ:
             environ['REMOTE_USER'] = message
