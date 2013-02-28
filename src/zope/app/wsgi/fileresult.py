@@ -15,7 +15,7 @@
 
 $Id$
 """
-
+import io
 import tempfile
 from zope import component, interface
 import zope.publisher.interfaces.http
@@ -76,4 +76,19 @@ if issubclass(_tfile, FileType):
 @component.adapter(_tfile, zope.publisher.interfaces.http.IHTTPRequest)
 @interface.implementer(zope.publisher.http.IResult)
 def TemporaryFileResult(f, request):
+    return FileResult(f, request)
+
+@component.adapter(io.BufferedReader, zope.publisher.interfaces.http.IHTTPRequest)
+@interface.implementer(zope.publisher.http.IResult)
+def BufferedReaderFileResult(f, request):
+    return FileResult(f, request)
+
+@component.adapter(io.TextIOWrapper, zope.publisher.interfaces.http.IHTTPRequest)
+@interface.implementer(zope.publisher.http.IResult)
+def TextIOWrapperFileResult(f, request):
+    return FileResult(f, request)
+
+@component.adapter(io.BufferedRandom, zope.publisher.interfaces.http.IHTTPRequest)
+@interface.implementer(zope.publisher.http.IResult)
+def BufferedRandomFileResult(f, request):
     return FileResult(f, request)
