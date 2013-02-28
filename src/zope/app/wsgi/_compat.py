@@ -28,5 +28,5 @@ else:
     _u = str
     import xmlrpc.client as xmlrpcclient
     import http.client as httpclient
-    from io import IOBase
-    FileType = IOBase
+    import io
+    FileType = io._io._IOBase

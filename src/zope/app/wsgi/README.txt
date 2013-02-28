@@ -145,7 +145,7 @@ example:
   >>> sitezcml = os.path.join(temp_dir, 'site.zcml')
   >>> written = open(sitezcml, 'w').write('<configure />')
 
-  >>> configFile = io.StringIO('''
+  >>> configFile = io.StringIO(u'''
   ... site-definition %s
   ...
   ... <zodb>

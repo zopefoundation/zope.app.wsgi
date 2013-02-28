@@ -26,7 +26,7 @@ Lets look at an example with a regular file object:
     >>> request = TestRequest()
     >>> result = component.getMultiAdapter((ProxyFactory(f), request), IResult)
     >>> for line in result:
-    ...     print(line)
+    ...     print(line.decode('latin1'))
     One
     Two
     Three
@@ -39,11 +39,11 @@ Lets look at an example with a regular file object:
 We'll see something similar with a temporary file:
 
     >>> t = tempfile.TemporaryFile()
-    >>> t.write('Three\nTwo\nOne\nHa ha! I love to count down!\n')
+    >>> written = t.write(b'Three\nTwo\nOne\nHa ha! I love to count down!\n')
     >>> request = TestRequest()
     >>> result = component.getMultiAdapter((ProxyFactory(t), request), IResult)
     >>> for line in result:
-    ...     print line
+    ...     print(line.decode('latin1'))
     Three
     Two
     One
