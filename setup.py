@@ -20,8 +20,20 @@
 """
 from setuptools import setup, find_packages
 
+TESTS_REQUIRE = [
+    'zope.testbrowser[wsgi] >= 4.0.0',
+    'zope.annotation',
+    'zope.authentication',
+    'zope.browserpage',
+    'zope.login',
+    'zope.password',
+    'zope.principalregistry >=4.0.0a1',
+    'zope.securitypolicy >=4.0.0a1',
+    'zope.testing',
+    ]
+
 setup(name='zope.app.wsgi',
-      version='4.0.0a1.dev',
+      version='4.0.0a2',
       url='http://pypi.python.org/pypi/zope.app.wsgi',
       license='ZPL 2.1',
       description='WSGI application for the zope.publisher',
@@ -46,22 +58,13 @@ setup(name='zope.app.wsgi',
       packages=find_packages('src'),
       package_dir = {'': 'src'},
       namespace_packages=['zope', 'zope.app'],
-      extras_require = dict(test=[
-          'zope.testbrowser[wsgi] >= 4.0.0',
-          'zope.annotation',
-          'zope.authentication',
-          'zope.browserpage',
-          'zope.login',
-          'zope.password',
-          'zope.principalregistry >=4.0.0a1',
-          'zope.securitypolicy >=4.0.0a1',
-          'zope.testing',
-          ],
-          testbrowser=['zope.testbrowser[wsgi] >= 4.0.0']),
+      extras_require = dict(
+        test=TESTS_REQUIRE,
+        testbrowser=['zope.testbrowser[wsgi] >= 4.0.0']),
       install_requires=[
           'setuptools',
           'ZConfig',
-          'ZODB',
+          'transaction',
           'zope.app.appsetup >= 3.14',
           'zope.processlifetime',
           'zope.app.publication',
@@ -79,6 +82,8 @@ setup(name='zope.app.wsgi',
           'zope.testing',
           'zope.traversing>=4.0.0a1',
           ],
+      tests_require=TESTS_REQUIRE,
+      test_suite='zope.app.wsgi.tests.test_suite',
       entry_points={
           'paste.app_factory': [
               'main = zope.app.wsgi.paste:ZopeApplication'

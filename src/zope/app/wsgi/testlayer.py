@@ -64,8 +64,7 @@ class BrowserLayer(WSGILayer, ZODBLayer):
         # WSGIPublisherApplication and not easily accessible otherwise, we fake
         # it into creating a requestFactory instance, so we can read the class
         # off of that in testSetUp()
-        fake_db = object()
-        self._application = WSGIPublisherApplication(fake_db)
+        self._application = WSGIPublisherApplication(self.db)
         return AuthorizationMiddleware(
             TransactionMiddleware(
                 self.getRootFolder,

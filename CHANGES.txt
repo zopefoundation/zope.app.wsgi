@@ -2,6 +2,12 @@
 CHANGES
 =======
 
+4.0.0a2 (2013-02-28)
+--------------------
+
+- Fixed a bug in WSGI Test Layer setup, where the DB is not correctly set.
+
+
 4.0.0a1 (2013-02-28)
 --------------------
 
