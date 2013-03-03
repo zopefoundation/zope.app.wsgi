@@ -72,7 +72,7 @@ We can also specify handle_errors as false using boolean or strings:
   >>> app = ZopeApplication({}, zopeconf, handle_errors=False)
   >>> app.handleErrors
   False
-  
+
   >>> for v in ('0', 'false', 'no', 'f', 'n'):
   ...     print(ZopeApplication({}, zopeconf, handle_errors=v).handleErrors)
   False

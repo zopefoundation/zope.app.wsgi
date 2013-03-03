@@ -18,6 +18,7 @@
   <include package="zope.app.appsetup" />
   <include package="zope.app.publication" />
   <include package="zope.authentication" />
+  <include package="zope.component" />
   <include package="zope.container" />
   <include package="zope.location" />
   <include package="zope.principalregistry" />

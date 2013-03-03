@@ -114,12 +114,16 @@ class BrowserLayer(ZODBLayer):
         # WSGI middleware.
         return app
 
-    def make_wsgi_app(self):
+    def make_wsgi_app(self, setup_middleware=lambda a: a):
         self._application = WSGIPublisherApplication(self.db)
         return AuthorizationMiddleware(
             TransactionMiddleware(
                 self.getRootFolder,
-                self.setup_middleware(self._application)))
+                self.setup_middleware(
+                    setup_middleware(self._application)
+                    )
+                )
+            )
 
     def tearDown(self):
         if self.allowTearDown:

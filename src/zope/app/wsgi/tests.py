@@ -12,18 +12,16 @@
 #
 ##############################################################################
 """WSGI tests"""
-from zope.app.wsgi.testing import SillyMiddleWareBrowserLayer
-from zope.app.wsgi.testlayer import BrowserLayer
-from zope.component.testlayer import ZCMLFileLayer
-from zope.testing import renormalizing
 import doctest
 import re
 import unittest
 import zope.app.wsgi
 import zope.event
-
-def cleanEvents(s):
-    zope.event.subscribers.pop()
+import zope.component.testing
+from zope.app.wsgi.testing import SillyMiddleWare
+from zope.app.wsgi.testlayer import BrowserLayer
+from zope.component.testlayer import ZCMLFileLayer
+from zope.testing import renormalizing
 
 def creating_app_w_paste_emits_ProcessStarting_event():
     """
@@ -62,13 +60,12 @@ def creating_app_w_paste_emits_ProcessStarting_event():
     >>> zope.event.subscribers.remove(subscriber)
     """
 
-filereturns_layer = BrowserLayer(zope.app.wsgi, name='filereturns')
-def setUpFileReturns(test):
-    test.globs['wsgi_app'] = filereturns_layer.make_wsgi_app()
+wsgiapp_layer = BrowserLayer(zope.app.wsgi, name='wsgiapp')
+def setUpWSGIApp(test):
+    test.globs['wsgi_app'] = wsgiapp_layer.make_wsgi_app()
 
-testlayer_layer = SillyMiddleWareBrowserLayer(zope.app.wsgi, name='testlayer')
-def setUpTestLayer(test):
-    test.globs['wsgi_app'] = testlayer_layer.make_wsgi_app()
+def setUpSillyWSGIApp(test):
+    test.globs['wsgi_app'] = wsgiapp_layer.make_wsgi_app(SillyMiddleWare)
 
 def test_suite():
 
@@ -80,21 +77,22 @@ def test_suite():
         ])
 
     filereturns_suite = doctest.DocFileSuite(
-        'filereturns.txt', setUp=setUpFileReturns)
-    filereturns_suite.layer = filereturns_layer
+        'filereturns.txt', setUp=setUpWSGIApp)
+    filereturns_suite.layer = wsgiapp_layer
     suites.append(filereturns_suite)
 
     dt_suite = doctest.DocTestSuite()
-    dt_suite.layer = BrowserLayer(zope.app.wsgi)
+    dt_suite.layer = wsgiapp_layer
     suites.append(dt_suite)
 
     readme_test = doctest.DocFileSuite(
             'README.txt',
-            checker=checker, tearDown=cleanEvents,
+            checker=checker,
             optionflags=doctest.NORMALIZE_WHITESPACE | doctest.ELLIPSIS)
-    readme_test.layer = ZCMLFileLayer(zope.app.wsgi)
+    # This test needs its own layer/teardown, since it registers components
+    # with objects that later do not exist.
+    readme_test.layer = ZCMLFileLayer(zope.app.wsgi, name="README")
     suites.append(readme_test)
-
 
     doctest_suite = doctest.DocFileSuite(
             'fileresult.txt', 'paste.txt',
@@ -103,11 +101,10 @@ def test_suite():
     doctest_suite.layer = ZCMLFileLayer(zope.app.wsgi)
     suites.append(doctest_suite)
 
-
     testlayer_suite = doctest.DocFileSuite(
-        'testlayer.txt', setUp=setUpTestLayer,
+        'testlayer.txt', setUp=setUpSillyWSGIApp,
         optionflags=doctest.NORMALIZE_WHITESPACE)
-    testlayer_suite.layer = testlayer_layer
+    testlayer_suite.layer = wsgiapp_layer
     suites.append(testlayer_suite)
 
     return unittest.TestSuite(suites)

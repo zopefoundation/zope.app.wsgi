@@ -5,8 +5,12 @@ CHANGES
 4.0.0a3 (unreleased)
 --------------------
 
-- tox now uses the Zope test runner to execute tests, since setup tests cannot
-  deal with layers, especially when they need to spawn sub-proceeses.
+- You can now specify additional WSGI middleware components wihtout
+  subclassing the ``BrowserLayer`` class.
+
+- `tox` now uses the Zope test runner's `ftest` command to execute tests,
+  since setup tests cannot deal with layers, especially when they need to
+  spawn sub-proceeses.
 
 - Switched all functional tests to use `WebTest` instead of
   ``zope.testbrowser``. Setup proper layering.
