@@ -34,7 +34,7 @@ TESTS_REQUIRE = [
     ]
 
 setup(name='zope.app.wsgi',
-      version='4.0.0a3',
+      version='4.0.0a4.dev0',
       url='http://pypi.python.org/pypi/zope.app.wsgi',
       license='ZPL 2.1',
       description='WSGI application for the zope.publisher',
