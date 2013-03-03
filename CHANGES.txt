@@ -5,7 +5,7 @@ CHANGES
 4.0.0a4 (unreleased)
 --------------------
 
-- Nothing changed yet.
+- Improve Trove classifiers.
 
 
 4.0.0a3 (2013-03-03)
