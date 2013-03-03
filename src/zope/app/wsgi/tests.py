@@ -22,7 +22,6 @@ import unittest
 import zope.app.wsgi
 import zope.event
 
-
 def cleanEvents(s):
     zope.event.subscribers.pop()
 
@@ -63,6 +62,14 @@ def creating_app_w_paste_emits_ProcessStarting_event():
     >>> zope.event.subscribers.remove(subscriber)
     """
 
+filereturns_layer = BrowserLayer(zope.app.wsgi, name='filereturns')
+def setUpFileReturns(test):
+    test.globs['wsgi_app'] = filereturns_layer.make_wsgi_app()
+
+testlayer_layer = SillyMiddleWareBrowserLayer(zope.app.wsgi, name='testlayer')
+def setUpTestLayer(test):
+    test.globs['wsgi_app'] = testlayer_layer.make_wsgi_app()
+
 def test_suite():
 
     suites = []
@@ -72,12 +79,10 @@ def test_suite():
          r'ComponentLookupError'),
         ])
 
-    from zope.testbrowser.browser import HAVE_MECHANIZE
-    if HAVE_MECHANIZE:
-        # Until mechanize is not available for python 3, do not run this test
-        filereturns_suite = doctest.DocFileSuite('filereturns.txt')
-        filereturns_suite.layer = BrowserLayer(zope.app.wsgi)
-        suites.append(filereturns_suite)
+    filereturns_suite = doctest.DocFileSuite(
+        'filereturns.txt', setUp=setUpFileReturns)
+    filereturns_suite.layer = filereturns_layer
+    suites.append(filereturns_suite)
 
     dt_suite = doctest.DocTestSuite()
     dt_suite.layer = BrowserLayer(zope.app.wsgi)
@@ -99,12 +104,10 @@ def test_suite():
     suites.append(doctest_suite)
 
 
-    if HAVE_MECHANIZE:
-        # Until mechanize is not available for python 3, do not run this test
-        testlayer_suite = doctest.DocFileSuite(
-                'testlayer.txt',
-                optionflags=doctest.NORMALIZE_WHITESPACE)
-        testlayer_suite.layer = SillyMiddleWareBrowserLayer(zope.app.wsgi)
-        suites.append(testlayer_suite)
+    testlayer_suite = doctest.DocFileSuite(
+        'testlayer.txt', setUp=setUpTestLayer,
+        optionflags=doctest.NORMALIZE_WHITESPACE)
+    testlayer_suite.layer = testlayer_layer
+    suites.append(testlayer_suite)
 
     return unittest.TestSuite(suites)

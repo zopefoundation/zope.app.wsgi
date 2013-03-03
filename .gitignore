@@ -1,6 +1,7 @@
 *.pyc
 *.so
 *.dll
+*.egg
 __pycache__
 src/*.egg-info
 

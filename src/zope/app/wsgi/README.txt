@@ -107,9 +107,9 @@ adapter that returns the principal id as value::
   >>> from pprint import pprint
   >>> pprint(environ)
   {'PATH_INFO': '/',
-   'REMOTE_USER': 'zope.anybody',
+   'REMOTE_USER': '...fallback_unauthenticated_principal',
    'wsgi.input': <...BytesIO object at ...>,
-   'wsgi.logging_info': 'zope.anybody'}
+   'wsgi.logging_info': '...fallback_unauthenticated_principal'}
 
 .. edge case
 
@@ -125,7 +125,7 @@ adapter that returns the principal id as value::
     {'PATH_INFO': '/',
      'REMOTE_USER': 'someoneelse',
      'wsgi.input': <...BytesIO object at ...>,
-     'wsgi.logging_info': 'zope.anybody'}
+     'wsgi.logging_info': '...fallback_unauthenticated_principal'}
 
 
 Creating A WSGI Application

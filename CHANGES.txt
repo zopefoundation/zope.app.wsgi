@@ -5,7 +5,16 @@ CHANGES
 4.0.0a3 (unreleased)
 --------------------
 
-- Nothing changed yet.
+- tox now uses the Zope test runner to execute tests, since setup tests cannot
+  deal with layers, especially when they need to spawn sub-proceeses.
+
+- Switched all functional tests to use `WebTest` instead of
+  ``zope.testbrowser``. Setup proper layering.
+
+- Do not rely on ``zope.testbrowser.wsgi`` WSGI layer support. It was not
+  needed anyways.
+
+- Minimized the ``ftesting.zcml`` setup.
 
 
 4.0.0a2 (2013-03-02)

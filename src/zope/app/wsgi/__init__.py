@@ -12,8 +12,6 @@
 #
 ##############################################################################
 """A WSGI Application wrapper for zope
-
-$Id$
 """
 from __future__ import print_function
 
@@ -53,8 +51,9 @@ class WSGIPublisherApplication(object):
         self.requestFactory = None
         self.handleErrors = handle_errors
 
-        if db is not None:
-            self.requestFactory = factory(db)
+        if db is None:
+            db = object()
+        self.requestFactory = factory(db)
 
     def __call__(self, environ, start_response):
         """See zope.app.wsgi.interfaces.IWSGIApplication"""

@@ -21,7 +21,7 @@
 from setuptools import setup, find_packages
 
 TESTS_REQUIRE = [
-    'zope.testbrowser[wsgi] >= 4.0.0',
+    'WebTest',
     'zope.annotation',
     'zope.authentication',
     'zope.browserpage',
@@ -30,6 +30,7 @@ TESTS_REQUIRE = [
     'zope.principalregistry >=4.0.0a1',
     'zope.securitypolicy >=4.0.0a1',
     'zope.testing',
+    'zope.testrunner',
     ]
 
 setup(name='zope.app.wsgi',
@@ -60,7 +61,12 @@ setup(name='zope.app.wsgi',
       namespace_packages=['zope', 'zope.app'],
       extras_require = dict(
         test=TESTS_REQUIRE,
-        testbrowser=['zope.testbrowser[wsgi] >= 4.0.0']),
+        testlayer=['WebTest'],
+        ),
+      setup_requires=[
+        'eggtestinfo',
+        'zope.testrunner',
+        ],
       install_requires=[
           'setuptools',
           'ZConfig',
@@ -84,6 +90,7 @@ setup(name='zope.app.wsgi',
           ],
       tests_require=TESTS_REQUIRE,
       test_suite='zope.app.wsgi.tests.test_suite',
+      test_loader='zope.testrunner.eggsupport:SkipLayers',
       entry_points={
           'paste.app_factory': [
               'main = zope.app.wsgi.paste:ZopeApplication'
