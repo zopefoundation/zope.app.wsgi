@@ -19,12 +19,17 @@ CHANGES
   spawn sub-proceeses.
 
 - Switched all functional tests to use `WebTest` instead of
-  ``zope.testbrowser``. Setup proper layering.
+  ``zope.testbrowser``. Set up proper layering.
 
 - Do not rely on ``zope.testbrowser.wsgi`` WSGI layer support. It was not
   needed anyways.
 
 - Minimized the ``ftesting.zcml`` setup.
+
+- Backwards incompatibility: if you depend on ``zope.app.wsgi.testlayer``, you
+  will need to require ``zope.app.wsgi[testlayer] >= 4.0`` (version constraint
+  is there because older zope.app.wsgi releases did not define a ``testlayer``
+  extra).
 
 
 4.0.0a2 (2013-03-02)
