@@ -128,7 +128,8 @@ class BrowserLayer(ZODBLayer):
     def tearDown(self):
         if self.allowTearDown:
             super(BrowserLayer, self).tearDown()
-        raise NotImplementedError
+        else:
+            raise NotImplementedError
 
 class NotInBrowserLayer(Exception):
     """The current test is not running in a layer inheriting from

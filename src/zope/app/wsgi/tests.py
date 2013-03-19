@@ -60,7 +60,7 @@ def creating_app_w_paste_emits_ProcessStarting_event():
     >>> zope.event.subscribers.remove(subscriber)
     """
 
-wsgiapp_layer = BrowserLayer(zope.app.wsgi, name='wsgiapp')
+wsgiapp_layer = BrowserLayer(zope.app.wsgi, name='wsgiapp', allowTearDown=True)
 def setUpWSGIApp(test):
     test.globs['wsgi_app'] = wsgiapp_layer.make_wsgi_app()
 

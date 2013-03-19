@@ -7,6 +7,8 @@ CHANGES
 
 - Improve Trove classifiers.
 
+- Fix ``BrowserLayer(allowTearDown=True)`` to actually allow tear downs.
+
 
 4.0.0a3 (2013-03-03)
 --------------------
