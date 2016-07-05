@@ -5,7 +5,8 @@ CHANGES
 4.0.0a5 (unreleased)
 --------------------
 
-- Nothing changed yet.
+- Update dependencies to no longer pin alpha versions of packages which already
+  have final releases.
 
 
 4.0.0a4 (2013-03-19)
