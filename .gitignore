@@ -7,8 +7,11 @@ src/*.egg-info
 
 .installed.cfg
 .tox
+.coverage
+coverage.xml
 bin
 build
 develop-eggs
 dist
 parts
+htmlcov/

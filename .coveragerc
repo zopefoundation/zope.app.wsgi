@@ -1,0 +1,12 @@
+[run]
+branch = True
+source = zope.app.wsgi
+
+[report]
+precision = 2
+omit = */interfaces.py
+       */tests/*
+       */tests.py
+
+[html]
+directory = htmlcov
