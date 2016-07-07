@@ -12,21 +12,22 @@
 #
 ##############################################################################
 """WSGI tests"""
+from zope.app.wsgi.testing import SillyMiddleWare
+from zope.app.wsgi.testlayer import BrowserLayer
 from zope.authentication.interfaces import IUnauthenticatedPrincipal
+from zope.component.testlayer import ZCMLFileLayer
 from zope.publisher.interfaces.logginginfo import ILoggingInfo
+from zope.testing import renormalizing
 import doctest
 import io
 import re
 import unittest
 import zope.app.wsgi
-import zope.event
 import zope.component
 import zope.component.testing
-from zope.app.wsgi.testing import SillyMiddleWare
-from zope.app.wsgi.testlayer import BrowserLayer
-from zope.component.testlayer import ZCMLFileLayer
-from zope.testing import renormalizing
+import zope.event
 import zope.interface
+
 
 def creating_app_w_paste_emits_ProcessStarting_event():
     """
@@ -64,6 +65,7 @@ def creating_app_w_paste_emits_ProcessStarting_event():
 
     >>> zope.event.subscribers.remove(subscriber)
     """
+
 
 wsgiapp_layer = BrowserLayer(zope.app.wsgi, name='wsgiapp', allowTearDown=True)
 def setUpWSGIApp(test):
