@@ -12,6 +12,9 @@ CHANGES
 
 - Claim support for Python 3.4 and 3.5.
 
+- Fix a bug occurring in Python 3 when the principal could not be adapted to
+  `ILoggingInfo`.
+
 4.0.0a4 (2013-03-19)
 --------------------
 

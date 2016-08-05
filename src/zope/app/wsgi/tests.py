@@ -13,15 +13,22 @@
 ##############################################################################
 """WSGI tests"""
 import doctest
+import io
 import re
 import unittest
-import zope.app.wsgi
-import zope.event
-import zope.component.testing
+
 from zope.app.wsgi.testing import SillyMiddleWare
 from zope.app.wsgi.testlayer import BrowserLayer
+from zope.authentication.interfaces import IUnauthenticatedPrincipal
 from zope.component.testlayer import ZCMLFileLayer
+from zope.publisher.interfaces.logginginfo import ILoggingInfo
 from zope.testing import renormalizing
+import zope.app.wsgi
+import zope.component
+import zope.component.testing
+import zope.event
+import zope.interface
+
 
 def creating_app_w_paste_emits_ProcessStarting_event():
     """
@@ -60,21 +67,59 @@ def creating_app_w_paste_emits_ProcessStarting_event():
     >>> zope.event.subscribers.remove(subscriber)
     """
 
+
 wsgiapp_layer = BrowserLayer(zope.app.wsgi, name='wsgiapp', allowTearDown=True)
+
+
 def setUpWSGIApp(test):
     test.globs['wsgi_app'] = wsgiapp_layer.make_wsgi_app()
+
 
 def setUpSillyWSGIApp(test):
     test.globs['wsgi_app'] = wsgiapp_layer.make_wsgi_app(SillyMiddleWare)
 
-def test_suite():
 
+@zope.component.adapter(IUnauthenticatedPrincipal)
+@zope.interface.implementer(ILoggingInfo)
+def could_not_adapt_principal_to_logging_info(context):
+    """Fake that a principal could not be adapted to ILoggingInfo."""
+    return None
+
+
+class WSGIPublisherApplicationTests(unittest.TestCase):
+    """Testing .WSGIPublisherApplication."""
+
+    layer = wsgiapp_layer
+
+    def setUp(self):
+        zope.component.provideAdapter(
+            could_not_adapt_principal_to_logging_info)
+
+    def tearDown(self):
+        super(WSGIPublisherApplicationTests, self).tearDown()
+        gsm = zope.component.getGlobalSiteManager()
+        assert gsm.unregisterAdapter(could_not_adapt_principal_to_logging_info)
+
+    def test_WSGIPublisherApplication___call___1(self):
+        """It sets '-' as 'wsgi.logging_info' in environ as fall back.
+
+        This is the case if the principal couldn't be adapted to ILoggingInfo.
+        """
+        from . import WSGIPublisherApplication
+
+        app = WSGIPublisherApplication()
+        environ = {'wsgi.input': io.BytesIO(b'')}
+        list(app(environ, lambda status, headers: None))
+        self.assertEqual('-', environ['wsgi.logging_info'])
+
+
+def test_suite():
     suites = []
     checker = renormalizing.RENormalizing([
         (re.compile(
             r"&lt;class 'zope.component.interfaces.ComponentLookupError'&gt;"),
          r'ComponentLookupError'),
-        ])
+    ])
 
     filereturns_suite = doctest.DocFileSuite(
         'filereturns.txt', setUp=setUpWSGIApp)
@@ -85,19 +130,21 @@ def test_suite():
     dt_suite.layer = wsgiapp_layer
     suites.append(dt_suite)
 
+    suites.append(unittest.makeSuite(WSGIPublisherApplicationTests))
+
     readme_test = doctest.DocFileSuite(
-            'README.txt',
-            checker=checker,
-            optionflags=doctest.NORMALIZE_WHITESPACE | doctest.ELLIPSIS)
+        'README.txt',
+        checker=checker,
+        optionflags=doctest.NORMALIZE_WHITESPACE | doctest.ELLIPSIS)
     # This test needs its own layer/teardown, since it registers components
     # with objects that later do not exist.
     readme_test.layer = ZCMLFileLayer(zope.app.wsgi, name="README")
     suites.append(readme_test)
 
     doctest_suite = doctest.DocFileSuite(
-            'fileresult.txt', 'paste.txt',
-            checker=checker,
-            optionflags=doctest.NORMALIZE_WHITESPACE | doctest.ELLIPSIS)
+        'fileresult.txt', 'paste.txt',
+        checker=checker,
+        optionflags=doctest.NORMALIZE_WHITESPACE | doctest.ELLIPSIS)
     doctest_suite.layer = ZCMLFileLayer(zope.app.wsgi)
     suites.append(doctest_suite)
 

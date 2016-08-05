@@ -67,7 +67,7 @@ class WSGIPublisherApplication(object):
         # Get logging info from principal for log use
         logging_info = ILoggingInfo(request.principal, None)
         if logging_info is None:
-            message = '-'
+            message = b'-'
         else:
             message = logging_info.getLogMessage()
 
