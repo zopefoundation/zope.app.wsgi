@@ -34,9 +34,9 @@ Let's create testing site.zcml and zope.conf file.
   >>> import os, tempfile
   >>> temp_dir = tempfile.mkdtemp()
   >>> sitezcml = os.path.join(temp_dir, 'site.zcml')
-  >>> open(sitezcml, 'w').write('<configure />')
+  >>> written = open(sitezcml, 'w').write('<configure />')
   >>> zopeconf = os.path.join(temp_dir, 'zope.conf')
-  >>> open(zopeconf, 'w').write('''
+  >>> written = open(zopeconf, 'w').write('''
   ... site-definition %s
   ...
   ... <zodb>
@@ -72,9 +72,9 @@ We can also specify handle_errors as false using boolean or strings:
   >>> app = ZopeApplication({}, zopeconf, handle_errors=False)
   >>> app.handleErrors
   False
-  
+
   >>> for v in ('0', 'false', 'no', 'f', 'n'):
-  ...     print ZopeApplication({}, zopeconf, handle_errors=v).handleErrors
+  ...     print(ZopeApplication({}, zopeconf, handle_errors=v).handleErrors)
   False
   False
   False

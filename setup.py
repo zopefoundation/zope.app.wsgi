@@ -17,73 +17,92 @@
 # Zope Toolkit policies as described by this documentation.
 ##############################################################################
 """Setup for zope.app.wsgi package
-
-$Id$
 """
 from setuptools import setup, find_packages
 
-setup(name='zope.app.wsgi',
-      version='3.15.1dev',
-      url='http://pypi.python.org/pypi/zope.app.wsgi',
-      license='ZPL 2.1',
-      description='WSGI application for the zope.publisher',
-      long_description=\
-          open('README.txt').read() + \
-          '\n\n' + \
-          open('CHANGES.txt').read(),
-      author='Zope Foundation and Contributors',
-      author_email='zope-dev@zope.org',
-      classifiers=['Environment :: Web Environment',
-                   'Intended Audience :: Developers',
-                   'License :: OSI Approved :: Zope Public License',
-                   'Programming Language :: Python',
-                   'Topic :: Internet :: WWW/HTTP :: WSGI :: Application',
-                   'Framework :: Zope3',
-                   ],
+TESTS_REQUIRE = [
+    'WebTest',
+    'zope.annotation',
+    'zope.authentication',
+    'zope.browserpage',
+    'zope.login',
+    'zope.password',
+    'zope.principalregistry >=4.0.0a1',
+    'zope.securitypolicy >=4.0.0a1',
+    'zope.testing',
+    'zope.testrunner',
+]
 
-      packages=find_packages('src'),
-      package_dir = {'': 'src'},
-      namespace_packages=['zope', 'zope.app'],
-      extras_require = dict(test=[
-          'zope.annotation',
-          'zope.authentication',
-          'zope.browserpage',
-          'zope.login',
-          'zope.password',
-          'zope.principalregistry',
-          'zope.securitypolicy',
-          'zope.testing',
-          'zope.traversing',
-          ]),
-      install_requires=[
-          'setuptools',
-          'WebTest',
-          'ZConfig',
-          'ZODB3',
-          'zope.app.appsetup >= 3.14',
-          'zope.processlifetime',
-          'zope.app.publication',
-          'zope.event',
-          'zope.interface',
-          'zope.publisher',
-          'zope.security',
-          'zope.component',
-          'zope.configuration',
-          'zope.container',
-          'zope.error',
-          'zope.lifecycleevent',
-          'zope.processlifetime',
-          'zope.session',
-          'zope.site',
-          'zope.testbrowser[wsgi] >= 4.0.0',
-          'zope.testing',
-          'zope.traversing',
-          ],
-      entry_points={
-          'paste.app_factory': [
-              'main = zope.app.wsgi.paste:ZopeApplication'
-          ]
-      },
-      include_package_data = True,
-      zip_safe = False,
-      )
+setup(
+    name='zope.app.wsgi',
+    version='4.0.0a5.dev0',
+    url='http://pypi.python.org/pypi/zope.app.wsgi',
+    license='ZPL 2.1',
+    description='WSGI application for the zope.publisher',
+    long_description=open('README.txt').read() +
+        '\n\n' +
+        open('CHANGES.txt').read(),
+    author='Zope Foundation and Contributors',
+    author_email='zope-dev@zope.org',
+    classifiers=[
+        'Development Status :: 5 - Production/Stable',
+        'Environment :: Web Environment',
+        'Intended Audience :: Developers',
+        'License :: OSI Approved :: Zope Public License',
+        'Programming Language :: Python',
+        'Programming Language :: Python :: 2',
+        'Programming Language :: Python :: 2.7',
+        'Programming Language :: Python :: 3',
+        'Programming Language :: Python :: 3.3',
+        'Programming Language :: Python :: 3.4',
+        'Programming Language :: Python :: 3.5',
+        'Programming Language :: Python :: Implementation',
+        'Programming Language :: Python :: Implementation :: CPython',
+        'Natural Language :: English',
+        'Operating System :: OS Independent',
+        'Topic :: Internet :: WWW/HTTP :: WSGI :: Application',
+        'Framework :: Zope3',
+    ],
+    packages=find_packages('src'),
+    package_dir={'': 'src'},
+    namespace_packages=['zope', 'zope.app'],
+    extras_require=dict(
+        test=TESTS_REQUIRE,
+        testlayer=['WebTest'],
+    ),
+    setup_requires=[
+        'eggtestinfo',
+        'zope.testrunner',
+    ],
+    install_requires=[
+        'setuptools',
+        'ZConfig',
+        'transaction',
+        'zope.app.appsetup >= 4.0',
+        'zope.processlifetime',
+        'zope.app.publication >= 4.0',
+        'zope.event',
+        'zope.interface',
+        'zope.publisher>=4.0.0a3',
+        'zope.security>4.0.0a2',
+        'zope.component',
+        'zope.configuration',
+        'zope.container >=4.0.0a1',
+        'zope.error',
+        'zope.lifecycleevent',
+        'zope.session >= 4.0.0a1',
+        'zope.site >= 4.0.0a1',
+        'zope.testing',
+        'zope.traversing>=4.0.0a1',
+    ],
+    tests_require=TESTS_REQUIRE,
+    test_suite='zope.app.wsgi.tests.test_suite',
+    test_loader='zope.testrunner.eggsupport:SkipLayers',
+    entry_points={
+        'paste.app_factory': [
+            'main = zope.app.wsgi.paste:ZopeApplication'
+        ]
+    },
+    include_package_data=True,
+    zip_safe=False,
+)

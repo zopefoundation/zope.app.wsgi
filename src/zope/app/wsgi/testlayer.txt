@@ -1,4 +1,5 @@
-It is possible to inject a wsgi stack by subclassing from BrowserLayer::
+
+It is possible to inject a wsgi stack by subclassing from BrowserLayer:
 
 First, create and register a view to test:
 
@@ -19,10 +20,10 @@ First, create and register a view to test:
 
 The `silly middleware` has injected information into the page:
 
-    >>> from zope.app.wsgi.testlayer import Browser
-    >>> browser = Browser()
-    >>> browser.open('http://localhost/index.html')
-    >>> print browser.contents
+    >>> from webtest.app import TestApp
+    >>> browser = TestApp(wsgi_app)
+    >>> res = browser.get('http://localhost/index.html')
+    >>> print(res.html)
     <html>
       <head>
       </head>
@@ -33,27 +34,30 @@ The `silly middleware` has injected information into the page:
 
 The default behavior of the browser is to handle errors::
 
-    >>> browser.open('http://localhost/error.html')
+    >>> browser.get('http://localhost/error.html') \
+    ...     #doctest: +IGNORE_EXCEPTION_DETAIL
     Traceback (most recent call last):
     ...
-    HTTPError: HTTP Error 500: Internal Server Error
+    AppError: Bad response: 500 Internal Server Error
 
 One can set error handling behavior::
 
-    >>> browser.handleErrors = False
-    >>> browser.open('http://localhost/error.html')
+    >>> browser = TestApp(wsgi_app, extra_environ={'wsgi.handleErrors': False})
+    >>> browser.get('http://localhost/error.html') \
+    ...     #doctest: +IGNORE_EXCEPTION_DETAIL
     Traceback (most recent call last):
     ...
     ZeroDivisionError: integer division or modulo by zero
 
 The http caller is more low level than the Browser.
-It exposes the same error handling parameter::
+It exposes the same error handling parameter:
 
     >>> from zope.app.wsgi.testlayer import http
-    >>> response = http('GET /error.html HTTP/1.1')
+    >>> response = http(wsgi_app, b'GET /error.html HTTP/1.1')
     >>> response.getStatus() == 500
     True
-    >>> http('GET /error.html HTTP/1.1', handle_errors=False)
+    >>> http(wsgi_app, b'GET /error.html HTTP/1.1', handle_errors=False) \
+    ...     #doctest: +IGNORE_EXCEPTION_DETAIL
     Traceback (most recent call last):
     ...
     ZeroDivisionError: integer division or modulo by zero

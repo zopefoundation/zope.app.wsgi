@@ -12,17 +12,16 @@ nothing bad happens. :)
     ...     checker.NamesChecker(['browserDefault', '__call__']),
     ...     )
 
-    >>> from zope.app.wsgi.testlayer import Browser
-    >>> browser = Browser()
-    >>> browser.handleErrors = False
-    >>> browser.open('http://localhost/@@test-file-view.html')
-    >>> browser.headers['content-type']
+    >>> from webtest.app import TestApp
+    >>> browser = TestApp(wsgi_app, extra_environ={'wsgi.handleErrors': False})
+    >>> res = browser.get('http://localhost/@@test-file-view.html')
+    >>> res.headers['content-type']
     'text/plain'
 
-    >>> browser.headers['content-length']
+    >>> res.headers['content-length']
     '13'
 
-    >>> print browser.contents
+    >>> print(res.body.decode())
     Hello
     World!
     <BLANKLINE>

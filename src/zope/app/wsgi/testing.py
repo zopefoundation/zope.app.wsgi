@@ -12,8 +12,6 @@
 #
 ##############################################################################
 """zope.app.wsgi common test related classes/functions/objects.
-
-$Id$
 """
 import tempfile
 
@@ -23,11 +21,10 @@ import zope.publisher.interfaces.browser
 from zope.app.wsgi.testlayer import BrowserLayer
 
 
+@interface.implementer(zope.publisher.interfaces.browser.IBrowserPublisher)
+@component.adapter(
+    interface.Interface, zope.publisher.interfaces.browser.IBrowserRequest)
 class FileView:
-
-    interface.implements(zope.publisher.interfaces.browser.IBrowserPublisher)
-    component.adapts(interface.Interface,
-                     zope.publisher.interfaces.browser.IBrowserRequest)
 
     def __init__(self, _, request):
         self.request = request
@@ -37,9 +34,11 @@ class FileView:
 
     def __call__(self):
         self.request.response.setHeader('content-type', 'text/plain')
-        f = tempfile.TemporaryFile()
-        f.write("Hello\nWorld!\n")
-        return f
+        fn = tempfile.mktemp()
+        with open(fn, 'wb') as file:
+            file.write(b"Hello\nWorld!\n")
+        file = open(fn, 'rb')
+        return file
 
 
 class IndexView(FileView):
@@ -72,9 +71,9 @@ class SillyMiddleWare(object):
         app_iter = self.application(environ, drop_content_length_response)
 
         # Very silly indeed:
-        result = ''.join(app_iter)
+        result = b''.join(app_iter)
         return [result.replace(
-            '<body>', '<body><h1>Hello from the silly middleware</h1>')]
+            b'<body>', b'<body><h1>Hello from the silly middleware</h1>')]
 
 
 class SillyMiddleWareBrowserLayer(BrowserLayer):

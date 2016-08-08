@@ -2,6 +2,72 @@
 CHANGES
 =======
 
+4.0.0a5 (unreleased)
+--------------------
+
+- Update dependencies to no longer pin alpha versions of packages which already
+  have final releases.
+
+- Drop support for Python 2.6.
+
+- Claim support for Python 3.4 and 3.5. This requires to update to
+
+  - ``zope.app.appsetup`` >= 4.0
+
+  - ``zope.app.publication`` >= 4.0
+
+- Fix a bug occurring in Python 3 when the principal could not be adapted to
+  `ILoggingInfo`.
+
+4.0.0a4 (2013-03-19)
+--------------------
+
+- Improve Trove classifiers.
+
+- Fix ``BrowserLayer(allowTearDown=True)`` to actually allow tear downs.
+
+
+4.0.0a3 (2013-03-03)
+--------------------
+
+- You can now specify additional WSGI middleware components wihtout
+  subclassing the ``BrowserLayer`` class.
+
+- `tox` now uses the Zope test runner's `ftest` command to execute tests,
+  since setup tests cannot deal with layers, especially when they need to
+  spawn sub-proceeses.
+
+- Switched all functional tests to use `WebTest` instead of
+  ``zope.testbrowser``. Set up proper layering.
+
+- Do not rely on ``zope.testbrowser.wsgi`` WSGI layer support. It was not
+  needed anyways.
+
+- Minimized the ``ftesting.zcml`` setup.
+
+- Backwards incompatibility: if you depend on ``zope.app.wsgi.testlayer``, you
+  will need to require ``zope.app.wsgi[testlayer] >= 4.0`` (version constraint
+  is there because older zope.app.wsgi releases did not define a ``testlayer``
+  extra).
+
+
+4.0.0a2 (2013-03-02)
+--------------------
+
+- Fixed a bug in WSGI Test Layer setup, where the DB is not correctly set.
+
+
+4.0.0a1 (2013-02-28)
+--------------------
+
+- Added support for Python 3.3.
+
+- Replaced deprecated ``zope.interface.implements`` usage with equivalent
+  ``zope.interface.implementer`` decorator.
+
+- Dropped support for Python 2.4 and 2.5.
+
+
 3.15.0 (2012-01-19)
 -------------------
 

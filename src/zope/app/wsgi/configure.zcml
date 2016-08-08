@@ -1,5 +1,8 @@
 <configure xmlns="http://namespaces.zope.org/zope">
    <adapter factory=".fileresult.FileResult" />
    <adapter factory=".fileresult.TemporaryFileResult" />
+   <adapter factory=".fileresult.BufferedReaderFileResult" />
+   <adapter factory=".fileresult.TextIOWrapperFileResult" />
+   <adapter factory=".fileresult.BufferedRandomFileResult" />
 </configure>
 
