@@ -3,6 +3,7 @@ include *.txt
 include *.py
 include buildout.cfg
 include tox.ini
+include .coveragerc
 
 recursive-include src *
 
