@@ -2,8 +2,8 @@
 CHANGES
 =======
 
-4.0.0a5 (unreleased)
---------------------
+4.0.0 (2016-08-08)
+------------------
 
 - Update dependencies to no longer pin alpha versions of packages which already
   have final releases.
