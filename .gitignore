@@ -6,6 +6,7 @@ __pycache__
 src/*.egg-info
 
 .installed.cfg
+.eggs
 .tox
 .coverage
 coverage.xml
