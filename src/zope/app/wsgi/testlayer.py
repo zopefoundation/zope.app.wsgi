@@ -37,7 +37,7 @@ def auth_header(header):
         if p is None:
             p = ''
         plain = '%s:%s' % (u, p)
-        auth = base64.encodestring(plain.encode('utf-8'))
+        auth = base64.b64encode(plain.encode('utf-8'))
         return 'Basic %s' % str(auth.rstrip().decode('latin1'))
     return header
 
