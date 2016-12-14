@@ -39,9 +39,9 @@ setup(
     url='http://pypi.python.org/pypi/zope.app.wsgi',
     license='ZPL 2.1',
     description='WSGI application for the zope.publisher',
-    long_description=open('README.txt').read() +
+    long_description=open('README.rst').read() +
         '\n\n' +
-        open('CHANGES.txt').read(),
+        open('CHANGES.rst').read(),
     author='Zope Foundation and Contributors',
     author_email='zope-dev@zope.org',
     classifiers=[
