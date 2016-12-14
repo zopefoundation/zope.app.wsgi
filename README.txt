@@ -21,4 +21,4 @@ like this in your Paste configuration file::
 
 Look for more documentation inside the package itself.
 
-.. _PasteDeploy: http://pythonpaste.org/deploy/
+.. _PasteDeploy : http://pythonpaste.org/deploy/
