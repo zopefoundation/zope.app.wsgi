@@ -7,6 +7,8 @@ CHANGES
 
 - Use `base64.b64encode` to avoid deprecation warning with Python 3.
 
+- Add support for PyPy.
+
 
 4.0.0 (2016-08-08)
 ------------------

@@ -40,9 +40,9 @@ def creating_app_w_paste_emits_ProcessStarting_event():
     >>> import os, tempfile
     >>> temp_dir = tempfile.mkdtemp()
     >>> sitezcml = os.path.join(temp_dir, 'site.zcml')
-    >>> written = open(sitezcml, 'w').write('<configure />')
+    >>> with open(sitezcml, 'w') as f: _ = f.write('<configure />')
     >>> zopeconf = os.path.join(temp_dir, 'zope.conf')
-    >>> wrotten = open(zopeconf, 'w').write('''
+    >>> with open(zopeconf, 'w') as f: _ = f.write('''
     ... site-definition %s
     ...
     ... <zodb>

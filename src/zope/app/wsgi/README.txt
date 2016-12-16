@@ -143,7 +143,7 @@ example:
   >>> import os, tempfile
   >>> temp_dir = tempfile.mkdtemp()
   >>> sitezcml = os.path.join(temp_dir, 'site.zcml')
-  >>> written = open(sitezcml, 'w').write('<configure />')
+  >>> with open(sitezcml, 'w') as f: _ = f.write('<configure />')
 
   >>> configFile = io.StringIO(u'''
   ... site-definition %s
@@ -204,4 +204,3 @@ portability.
 
 For more information, refer to the WSGI specification:
 http://www.python.org/peps/pep-0333.html
-
