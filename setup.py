@@ -18,6 +18,7 @@
 ##############################################################################
 """Setup for zope.app.wsgi package
 """
+import os
 from setuptools import setup, find_packages
 
 TESTS_REQUIRE = [
@@ -33,15 +34,20 @@ TESTS_REQUIRE = [
     'zope.testrunner',
 ]
 
+def read(*rnames):
+    with open(os.path.join(os.path.dirname(__file__), *rnames)) as f:
+        return f.read()
+
+
 setup(
     name='zope.app.wsgi',
     version='4.1.0.dev0',
     url='http://pypi.python.org/pypi/zope.app.wsgi',
     license='ZPL 2.1',
     description='WSGI application for the zope.publisher',
-    long_description=open('README.rst').read() +
+    long_description=read('README.rst') +
         '\n\n' +
-        open('CHANGES.rst').read(),
+        read('CHANGES.rst'),
     author='Zope Foundation and Contributors',
     author_email='zope-dev@zope.org',
     classifiers=[
