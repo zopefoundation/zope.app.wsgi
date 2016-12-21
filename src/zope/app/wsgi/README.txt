@@ -143,7 +143,8 @@ example:
   >>> import os, tempfile
   >>> temp_dir = tempfile.mkdtemp()
   >>> sitezcml = os.path.join(temp_dir, 'site.zcml')
-  >>> with open(sitezcml, 'w') as f: _ = f.write('<configure />')
+  >>> with open(sitezcml, 'w') as f:
+  ...     _ = f.write('<configure />')
 
   >>> configFile = io.StringIO(u'''
   ... site-definition %s
