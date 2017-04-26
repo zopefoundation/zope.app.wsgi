@@ -5,10 +5,18 @@ CHANGES
 4.1.0 (unreleased)
 ------------------
 
-- Use `base64.b64encode` to avoid deprecation warning with Python 3.
+- Use ``base64.b64encode`` to avoid deprecation warning with Python 3.
 
 - Add support for PyPy.
 
+- Add support for Python 3.6.
+
+- Fix the testlayer's ``FakeResponse`` assuming that headers were in
+  unicode on Python 2, where they should usually be encoded bytes
+  already. This could lead to UnicodeDecodeError if the headers
+  contained non-ascii characters. Also make it implement
+  ``__unicode__`` on Python 2 and ``__bytes__`` on Python 3 to ease
+  cross version testing. See `issue 7 <https://github.com/zopefoundation/zope.app.wsgi/issues/7>`_.
 
 4.0.0 (2016-08-08)
 ------------------

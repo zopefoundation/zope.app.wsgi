@@ -16,3 +16,4 @@ develop-eggs
 dist
 parts
 htmlcov/
+.coverage.py*

@@ -144,6 +144,51 @@ class AuthHeaderTestCase(unittest.TestCase):
         self.assertEquals(auth_header(header), expected)
 
 
+class TestFakeResponse(unittest.TestCase):
+
+    def test_doesnt_assume_encoding_of_headers(self):
+        # https://github.com/zopefoundation/zope.app.wsgi/issues/7
+        # headers on Py2 should already be bytes or at least be allowed
+        # to be bytes. For BWC, we allow them to be bytes or unicode either
+        # platform.
+        # The body/__str__ can be decoded correctly too when this happens
+        from zope.app.wsgi.testlayer import FakeResponse
+
+        try:
+            text_type = unicode
+        except NameError:
+            text_type = str
+        class MockResponse(object):
+
+            status = '200 OK'
+            body = ''
+
+            def __init__(self):
+                self.headerlist = []
+
+        response = MockResponse()
+        # A latin-1 byte.
+        response.headerlist.append(("X-Header".encode('latin-1'),
+                                    u"voill\xe0".encode('latin-1')))
+
+        fake = FakeResponse(response)
+        self.assertEqual(fake.getOutput(), b'HTTP/1.0 200 OK\nX-Header: voill\xe0')
+        # No matter the platform, str/bytes should not raise
+        self.assertIn('HTTP', str(fake))
+        self.assertIn(b'HTTP', bytes(fake))
+        self.assertEqual(text_type(fake),
+                         u'HTTP/1.0 200 OK\nX-Header: voill\xe0')
+
+        # A utf-8 byte, smuggled inside latin-1, as discussed in PEP3333
+        response.headerlist[0] = (b'X-Header',
+                                  u'p-o-p \U0001F4A9'.encode('utf-8').decode('latin-1'))
+        self.assertEqual(fake.getOutput(),
+                         b'HTTP/1.0 200 OK\nX-Header: p-o-p \xf0\x9f\x92\xa9')
+        self.assertIn('HTTP', str(fake))
+        self.assertIn(b'HTTP', bytes(fake))
+        self.assertEqual(text_type(fake),
+                         u'HTTP/1.0 200 OK\nX-Header: p-o-p \xf0\x9f\x92\xa9')
+
 def test_suite():
     suites = []
     checker = renormalizing.RENormalizing([
@@ -160,9 +205,6 @@ def test_suite():
     dt_suite = doctest.DocTestSuite()
     dt_suite.layer = wsgiapp_layer
     suites.append(dt_suite)
-
-    suites.append(unittest.makeSuite(WSGIPublisherApplicationTests))
-    suites.append(unittest.makeSuite(AuthHeaderTestCase))
 
     readme_test = doctest.DocFileSuite(
         'README.txt',
@@ -185,5 +227,7 @@ def test_suite():
         optionflags=doctest.NORMALIZE_WHITESPACE)
     testlayer_suite.layer = wsgiapp_layer
     suites.append(testlayer_suite)
+
+    suites.append(unittest.defaultTestLoader.loadTestsFromName(__name__))
 
     return unittest.TestSuite(suites)
