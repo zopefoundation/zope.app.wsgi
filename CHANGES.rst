@@ -2,7 +2,7 @@
 CHANGES
 =======
 
-4.1.0 (unreleased)
+4.1.0 (2017-04-27)
 ------------------
 
 - Use ``base64.b64encode`` to avoid deprecation warning with Python 3.
