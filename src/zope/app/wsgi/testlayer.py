@@ -140,6 +140,16 @@ class NotInBrowserLayer(Exception):
 class FakeResponse(object):
     """This behave like a Response object returned by HTTPCaller of
     zope.app.testing.functional.
+
+    .. versionchanged:: 4.1.0
+       Implement support for unicode() on Python 2 to be equivalent to
+       str() on Python 3, and implement support for bytes() on Python 3
+       to be equivalent to str() on Python 2. This should help in cross version
+       testing.
+
+       On Python 2, ``getOutput`` and ``__str__`` should no longer produce
+       UnicodeErrors.
+
     """
 
     def __init__(self, response):
@@ -161,8 +171,15 @@ class FakeResponse(object):
         return self.response.body
 
     def getOutput(self):
-        parts = [b'HTTP/1.0 ' + self.response.status.encode('latin1')]
-        parts += [('%s: %s' % h).encode('latin1') for h in self.getHeaders()]
+        status = self.response.status
+        status = status.encode('latin1') if not isinstance(status, bytes) else status
+        parts = [b'HTTP/1.0 ' + status]
+
+        headers = [(k.encode('latin1') if not isinstance(k, bytes) else k,
+                    v.encode('latin1') if not isinstance(v, bytes) else v)
+                   for k, v in self.getHeaders()]
+
+        parts += [k + b': ' + v for k, v in headers]
 
         body = self.response.body
         if body:
@@ -171,9 +188,21 @@ class FakeResponse(object):
             parts += [b'', body]
         return b'\n'.join(parts)
 
-    def __str__(self):
-        out = self.getOutput()
-        return out.decode('latin1')
+    if str is bytes: # Py2
+
+        # Forcing __str__ through latin1, as Py3 does, will return
+        # unicode which will then be decoded as ascii, which could
+        # cause an UnicodeError.
+        __str__ = getOutput
+
+        def __unicode__(self):
+            return self.getOutput().decode('latin-1')
+    else:
+        __bytes__ = getOutput
+
+        def __str__(self):
+            return self.getOutput().decode('latin-1')
+
 
 def http(wsgi_app, string, handle_errors=True):
     request = TestRequest.from_file(BytesIO(string))
