@@ -208,7 +208,7 @@ class FakeResponse(object):
 
 
 def http(wsgi_app, string, handle_errors=True):
-    request = TestRequest.from_file(BytesIO(string))
+    request = TestRequest.from_file(BytesIO(string.lstrip()))
     request.environ['wsgi.handleErrors'] = handle_errors
     response = request.get_response(wsgi_app)
     return FakeResponse(response)
