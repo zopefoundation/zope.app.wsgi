@@ -2,6 +2,12 @@
 branch = True
 source = zope.app.wsgi
 
+[paths]
+source =
+    src/
+    .tox/*/lib/python*/site-packages/
+    .tox/pypy*/site-packages/
+
 [report]
 precision = 2
 omit = */interfaces.py
