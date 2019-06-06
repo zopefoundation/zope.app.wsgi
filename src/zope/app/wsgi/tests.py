@@ -120,28 +120,28 @@ class AuthHeaderTestCase(unittest.TestCase):
     def test_auth_encoded(self):
         from zope.app.wsgi.testlayer import auth_header
         header = 'Basic Z2xvYmFsbWdyOmdsb2JhbG1ncnB3'
-        self.assertEquals(auth_header(header), header)
+        self.assertEqual(auth_header(header), header)
 
     def test_auth_non_encoded(self):
         from zope.app.wsgi.testlayer import auth_header
         header = 'Basic globalmgr:globalmgrpw'
         expected = 'Basic Z2xvYmFsbWdyOmdsb2JhbG1ncnB3'
-        self.assertEquals(auth_header(header), expected)
+        self.assertEqual(auth_header(header), expected)
 
     def test_auth_non_encoded_empty(self):
         from zope.app.wsgi.testlayer import auth_header
         header = 'Basic globalmgr:'
         expected = 'Basic Z2xvYmFsbWdyOg=='
-        self.assertEquals(auth_header(header), expected)
+        self.assertEqual(auth_header(header), expected)
         header = 'Basic :pass'
         expected = 'Basic OnBhc3M='
-        self.assertEquals(auth_header(header), expected)
+        self.assertEqual(auth_header(header), expected)
 
     def test_auth_non_encoded_colon(self):
         from zope.app.wsgi.testlayer import auth_header
         header = 'Basic globalmgr:pass:pass'
         expected = 'Basic Z2xvYmFsbWdyOnBhc3M6cGFzcw=='
-        self.assertEquals(auth_header(header), expected)
+        self.assertEqual(auth_header(header), expected)
 
 
 class TestFakeResponse(unittest.TestCase):
