@@ -9,6 +9,12 @@ CHANGES
 
 - Drop support for Python 3.3 and 3.4.
 
+- Fix the testlayer's ``http()`` to accept leading whitespace in HTTP requests,
+  for compatibility with zope.app.testing.functional's HTTPCaller.
+
+- Add a ``server_protocol`` attribute to ``FakeResponse`` so you can customize
+  the output to be more compatible with zope.app.testing.functional's
+  HTTPCaller.
 
 4.1.0 (2017-04-27)
 ------------------

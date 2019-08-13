@@ -152,6 +152,9 @@ class FakeResponse(object):
 
     """
 
+    # XXX: zope.app.testing.functional used to respond with HTTP/1.1
+    server_protocol = b'HTTP/1.0'
+
     def __init__(self, response):
         self.response = response
 
@@ -173,7 +176,7 @@ class FakeResponse(object):
     def getOutput(self):
         status = self.response.status
         status = status.encode('latin1') if not isinstance(status, bytes) else status
-        parts = [b'HTTP/1.0 ' + status]
+        parts = [self.server_protocol + b' ' + status]
 
         headers = [(k.encode('latin1') if not isinstance(k, bytes) else k,
                     v.encode('latin1') if not isinstance(v, bytes) else v)
@@ -205,7 +208,7 @@ class FakeResponse(object):
 
 
 def http(wsgi_app, string, handle_errors=True):
-    request = TestRequest.from_file(BytesIO(string))
+    request = TestRequest.from_file(BytesIO(string.lstrip()))
     request.environ['wsgi.handleErrors'] = handle_errors
     response = request.get_response(wsgi_app)
     return FakeResponse(response)
@@ -241,6 +244,7 @@ class XMLRPCTestTransport(xmlrpcclient.Transport):
                 dict(extra_headers)["Authorization"],)
 
         request += "\n" + request_body
+        # XXX: http() needs to be passed a wsgi app!  where do we get a wsgi app?
         response = http(request, handle_errors=self.handleErrors)
 
         errcode = response.getStatus()
