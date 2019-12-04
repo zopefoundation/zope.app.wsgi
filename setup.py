@@ -34,6 +34,7 @@ TESTS_REQUIRE = [
     'zope.testrunner',
 ]
 
+
 def read(*rnames):
     with open(os.path.join(os.path.dirname(__file__), *rnames)) as f:
         return f.read()
@@ -77,10 +78,6 @@ setup(
         test=TESTS_REQUIRE,
         testlayer=['WebTest'],
     ),
-    setup_requires=[
-        'eggtestinfo',
-        'zope.testrunner',
-    ],
     install_requires=[
         'setuptools',
         'ZConfig',
@@ -103,8 +100,6 @@ setup(
         'zope.traversing>=4.0.0a1',
     ],
     tests_require=TESTS_REQUIRE,
-    test_suite='zope.app.wsgi.tests.test_suite',
-    test_loader='zope.testrunner.eggsupport:SkipLayers',
     entry_points={
         'paste.app_factory': [
             'main = zope.app.wsgi.paste:ZopeApplication'

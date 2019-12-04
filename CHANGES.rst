@@ -16,6 +16,9 @@ CHANGES
   the output to be more compatible with zope.app.testing.functional's
   HTTPCaller.
 
+- Drop support for running the tests using ``python setup.py test``.
+
+
 4.1.0 (2017-04-27)
 ------------------
 
