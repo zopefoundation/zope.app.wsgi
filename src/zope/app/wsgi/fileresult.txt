@@ -34,7 +34,7 @@ Lets look at an example with a regular file object:
 
     >>> request.response.getHeader('content-length')
     '38'
-    
+
 
 We'll see something similar with a temporary file:
 
@@ -52,13 +52,13 @@ We'll see something similar with a temporary file:
     >>> request.response.getHeader('content-length')
     '43'
 
-        
+
 If we provide a custom file wrapper:
 
     >>> class Wrapper:
     ...     def __init__(self, file):
     ...         self.file = file
- 
+
     >>> request = TestRequest(environ={'wsgi.file_wrapper': Wrapper})
     >>> result = component.getMultiAdapter((ProxyFactory(f), request), IResult)
     >>> result.__class__ is Wrapper
