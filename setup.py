@@ -42,8 +42,8 @@ def read(*rnames):
 
 setup(
     name='zope.app.wsgi',
-    version='4.1.1.dev0',
-    url='http://pypi.python.org/pypi/zope.app.wsgi',
+    version='4.2.0.dev0',
+    url='https://github.com/zopefoundation/zope.app.wsgi',
     license='ZPL 2.1',
     description='WSGI application for the zope.publisher',
     long_description=read('README.rst') +
@@ -63,6 +63,7 @@ setup(
         'Programming Language :: Python :: 3.5',
         'Programming Language :: Python :: 3.6',
         'Programming Language :: Python :: 3.7',
+        'Programming Language :: Python :: 3.8',
         'Programming Language :: Python :: Implementation',
         'Programming Language :: Python :: Implementation :: CPython',
         'Programming Language :: Python :: Implementation :: PyPy',
