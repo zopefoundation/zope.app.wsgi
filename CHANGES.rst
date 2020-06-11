@@ -2,10 +2,12 @@
 CHANGES
 =======
 
-4.2.1 (unreleased)
+4.3.0 (unreleased)
 ------------------
 
-- Nothing changed yet.
+- Fix the testlayer's ``http()`` to pass through the request protocol as the
+  response protocol, for compatibility with zope.app.testing.functional's
+  HTTPCaller.
 
 
 4.2.0 (2020-03-23)

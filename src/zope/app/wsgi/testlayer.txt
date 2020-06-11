@@ -50,9 +50,16 @@ One can set error handling behavior::
     ZeroDivisionError: integer division or modulo by zero
 
 The http caller is more low level than the Browser.
-It exposes the same error handling parameter:
 
     >>> from zope.app.wsgi.testlayer import http
+    >>> response = http(wsgi_app, b'GET /index.html HTTP/1.0')
+    >>> print(response)  #doctest: +ELLIPSIS
+    HTTP/1.0 200 Ok
+    Content-Type: text/html...
+    ...Hello from the silly middleware...
+
+It exposes the same error handling parameter:
+
     >>> response = http(wsgi_app, b'GET /error.html HTTP/1.1')
     >>> response.getStatus() == 500
     True
@@ -61,6 +68,14 @@ It exposes the same error handling parameter:
     Traceback (most recent call last):
     ...
     ZeroDivisionError: integer division or modulo by zero
+
+It passes through the request protocol as the response protocol:
+
+    >>> response = http(wsgi_app, b'GET /index.html HTTP/1.1')
+    >>> print(response)  #doctest: +ELLIPSIS
+    HTTP/1.1 200 Ok
+    Content-Type: text/html...
+    ...Hello from the silly middleware...
 
 Clean up:
 

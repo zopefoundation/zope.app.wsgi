@@ -152,11 +152,20 @@ class FakeResponse(object):
 
     """
 
-    # XXX: zope.app.testing.functional used to respond with HTTP/1.1
-    server_protocol = b'HTTP/1.0'
-
-    def __init__(self, response):
+    def __init__(self, response, request=None):
         self.response = response
+        self.request = request
+
+    @property
+    def server_protocol(self):
+        protocol = None
+        if self.request is not None:
+            protocol = self.request.environ.get('SERVER_PROTOCOL')
+        if protocol is None:
+            protocol = b'HTTP/1.0'
+        if not isinstance(protocol, bytes):
+            protocol = protocol.encode('latin1')
+        return protocol
 
     def getStatus(self):
         return self.response.status_int
@@ -211,7 +220,7 @@ def http(wsgi_app, string, handle_errors=True):
     request = TestRequest.from_file(BytesIO(string.lstrip()))
     request.environ['wsgi.handleErrors'] = handle_errors
     response = request.get_response(wsgi_app)
-    return FakeResponse(response)
+    return FakeResponse(response, request=request)
 
 
 class FakeSocket(object):
