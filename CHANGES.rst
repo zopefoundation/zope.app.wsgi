@@ -1,17 +1,17 @@
-=======
-CHANGES
-=======
+=========
+ CHANGES
+=========
 
 4.3.0 (unreleased)
-------------------
+==================
 
 - Fix the testlayer's ``http()`` to pass through the request protocol as the
   response protocol, for compatibility with zope.app.testing.functional's
-  HTTPCaller.
+  HTTPCaller. See `PR 21 <https://github.com/zopefoundation/zope.app.wsgi/pull/21>`_.
 
 
 4.2.0 (2020-03-23)
-------------------
+==================
 
 - Add support for Python 3.7 and 3.8.
 
@@ -28,7 +28,7 @@ CHANGES
 
 
 4.1.0 (2017-04-27)
-------------------
+==================
 
 - Use ``base64.b64encode`` to avoid deprecation warning with Python 3.
 
@@ -44,7 +44,7 @@ CHANGES
   cross version testing. See `issue 7 <https://github.com/zopefoundation/zope.app.wsgi/issues/7>`_.
 
 4.0.0 (2016-08-08)
-------------------
+==================
 
 - Update dependencies to no longer pin alpha versions of packages which already
   have final releases.
@@ -61,7 +61,7 @@ CHANGES
   `ILoggingInfo`.
 
 4.0.0a4 (2013-03-19)
---------------------
+====================
 
 - Improve Trove classifiers.
 
@@ -69,7 +69,7 @@ CHANGES
 
 
 4.0.0a3 (2013-03-03)
---------------------
+====================
 
 - You can now specify additional WSGI middleware components wihtout
   subclassing the ``BrowserLayer`` class.
@@ -93,13 +93,13 @@ CHANGES
 
 
 4.0.0a2 (2013-03-02)
---------------------
+====================
 
 - Fixed a bug in WSGI Test Layer setup, where the DB is not correctly set.
 
 
 4.0.0a1 (2013-02-28)
---------------------
+====================
 
 - Added support for Python 3.3.
 
@@ -110,7 +110,7 @@ CHANGES
 
 
 3.15.0 (2012-01-19)
--------------------
+===================
 
 - Fixed: zope.app.wsgi.paste.ZopeApplication didn't emit
   ProcessStarting events.
@@ -122,7 +122,7 @@ CHANGES
     application specific.)
 
 3.14.0 (2012-01-10)
--------------------
+===================
 
 - Set the WSGI environment's ``REMOTE_USER`` item (if not already set)
   with the Zope principal label. (This is the same data set in
@@ -135,20 +135,20 @@ CHANGES
 
 
 3.13.0 (2011-03-15)
--------------------
+===================
 
 - Update to zope.testbrowser 4.0.0 which uses WebTest instead of wsgi_intercept.
 
 
 3.12.0 (2011-01-25)
--------------------
+===================
 
 - Fixed ``zope.app.wsgi.testlayer.http`` to work with changes made in
   version 3.11.0.
 
 
 3.11.0 (2011-01-24)
--------------------
+===================
 
 - Moved `wsgi_intercept` support to ``zope.testbrowser.wsgi``, thus
   requiring at least version 3.11 of this package:
@@ -162,25 +162,25 @@ CHANGES
 
 
 3.10.0 (2010-11-18)
--------------------
+===================
 
 - Add pluggability for setting up WSGI middleware in testlayer.
 
 
 3.9.3 (2010-10-14)
-------------------
+==================
 
 - Python 2.7 compatibility for xmlrpc. Transplant of zope.app.testing r116141.
 
 
 3.9.2 (2010-05-23)
-------------------
+==================
 
 - Fixed test breakage due to changes in mechanize 0.2.0.
 
 
 3.9.1 (2010-04-24)
-------------------
+==================
 
 - Add support for testing XMLRPC using zope.app.wsgi.testlayer.
 
@@ -189,7 +189,7 @@ CHANGES
 
 
 3.9.0 (2010-04-19)
-------------------
+==================
 
 - Return a FakeResponse object in zope.app.wsgi.testlayer.http,
   so it becomes easier to port over tests from zope.app.testing's
@@ -203,7 +203,7 @@ CHANGES
 
 
 3.8.0 (2010-04-14)
-------------------
+==================
 
 - zope.app.wsgi.testlayer is now a lot more compatible with
   the HTTPCaller() functionality in zope.app.testing, which it can
@@ -220,7 +220,7 @@ CHANGES
 
 
 3.7.0 (2010-04-13)
-------------------
+==================
 
 - Rewrite tests in order not to dependent on ``zope.app.testing`` and
   ``zope.app.zcmlfiles``.
@@ -247,20 +247,20 @@ CHANGES
 
 
 3.6.1 (2010-01-29)
-------------------
+==================
 
 - Support product configuration sections in Zope configuration files.
 
 
 3.6.0 (2009-06-20)
-------------------
+==================
 
 - Import database events directly from ``zope.processlifetime``
   instead of using BBB imports in ``zope.app.appsetup``.
 
 
 3.5.2 (2009-04-03)
-------------------
+==================
 
 - The ``WSGIPublisherApplication`` uses now the ``ILoggingInfo`` concept given
   from zope.publisher.interfaces.logginginfo for log user infos usable for
@@ -270,14 +270,14 @@ CHANGES
 
 
 3.5.1 (2009-03-31)
-------------------
+==================
 
 - The ``WSGIPublisherApplication`` call now provides a user name
   in the environment meant for use in logs.
 
 
 3.5.0 (2009-02-10)
-------------------
+==================
 
 - Make devmode warning message more generic. We don't nesessary have the
   `etc/zope.conf` file nowadays when using buildout-based setups.
@@ -304,7 +304,7 @@ CHANGES
 
 
 3.4.1 (2008-07-30)
-------------------
+==================
 
 - Added Trove classifiers.
 
@@ -316,7 +316,7 @@ CHANGES
 
 
 3.4.0 (2007-09-14)
-------------------
+==================
 
 - Fixed the tests to run on Python 2.5 as well as Python 2.4.
 
@@ -325,7 +325,7 @@ CHANGES
 
 
 3.4.0a1 (2007-04-22)
---------------------
+====================
 
 Initial release as a separate project, corresponds to ``zope.app.wsgi``
 from Zope 3.4.0a1
