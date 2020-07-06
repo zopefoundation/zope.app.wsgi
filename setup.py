@@ -42,7 +42,7 @@ def read(*rnames):
 
 setup(
     name='zope.app.wsgi',
-    version='4.3.0',
+    version='4.3.1.dev0',
     url='https://github.com/zopefoundation/zope.app.wsgi',
     license='ZPL 2.1',
     description='WSGI application for the zope.publisher',
