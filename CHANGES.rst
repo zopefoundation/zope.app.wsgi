@@ -2,7 +2,7 @@
  CHANGES
 =========
 
-4.3.0 (unreleased)
+4.3.0 (2020-07-06)
 ==================
 
 - Fix the testlayer's ``http()`` to pass through the request protocol as the
