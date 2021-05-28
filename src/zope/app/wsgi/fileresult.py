@@ -35,7 +35,7 @@ class FallbackWrapper:
 
     def __iter__(self):
         f = self._file
-        while 1:
+        while True:
             v = f.read(32768)
             if v:
                 yield v
@@ -60,6 +60,7 @@ def FileResult(f, request):
         f = FallbackWrapper(f)
     return f
 
+
 # We need to provide an adapter for temporary files *if* they are different
 # than regular files. Whether they are is system dependent. Sigh.
 # If temporary files are the same type, we'll create a fake type just
@@ -78,17 +79,23 @@ if issubclass(_tfile, FileType):
 def TemporaryFileResult(f, request):
     return FileResult(f, request)
 
-@component.adapter(io.BufferedReader, zope.publisher.interfaces.http.IHTTPRequest)
+
+@component.adapter(io.BufferedReader,
+                   zope.publisher.interfaces.http.IHTTPRequest)
 @interface.implementer(zope.publisher.http.IResult)
 def BufferedReaderFileResult(f, request):
     return FileResult(f, request)
 
-@component.adapter(io.TextIOWrapper, zope.publisher.interfaces.http.IHTTPRequest)
+
+@component.adapter(io.TextIOWrapper,
+                   zope.publisher.interfaces.http.IHTTPRequest)
 @interface.implementer(zope.publisher.http.IResult)
 def TextIOWrapperFileResult(f, request):
     return FileResult(f, request)
 
-@component.adapter(io.BufferedRandom, zope.publisher.interfaces.http.IHTTPRequest)
+
+@component.adapter(io.BufferedRandom,
+                   zope.publisher.interfaces.http.IHTTPRequest)
 @interface.implementer(zope.publisher.http.IResult)
 def BufferedRandomFileResult(f, request):
     return FileResult(f, request)

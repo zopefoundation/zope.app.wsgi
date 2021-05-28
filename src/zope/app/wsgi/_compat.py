@@ -18,15 +18,15 @@ import sys
 PYTHON2 = sys.version_info[0] == 2
 PYTHON3 = sys.version_info[0] == 3
 
-if PYTHON2:
-    _u = unicode
+if PYTHON2:  # pragma: PY2
+    _u = unicode  # noqa: F821 undefined name
     import xmlrpclib as xmlrpcclient
     import httplib as httpclient
     import types
     FileType = types.FileType
-else:
+else:  # pragma: PY3
     _u = str
-    import xmlrpc.client as xmlrpcclient
-    import http.client as httpclient
+    import xmlrpc.client as xmlrpcclient  # noqa: F401 imported but unused
+    import http.client as httpclient  # noqa: F401 imported but unused
     import io
     FileType = io._io._IOBase
