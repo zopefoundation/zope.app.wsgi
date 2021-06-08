@@ -187,8 +187,8 @@ class FakeResponse(object):
 
     def getOutput(self):
         status = self.response.status
-        status = status.encode('latin1') if not isinstance(
-            status, bytes) else status
+        if not isinstance(status, bytes):
+            status = status.encode('latin1')
         parts = [self.server_protocol + b' ' + status]
 
         headers = [(k.encode('latin1') if not isinstance(k, bytes) else k,
