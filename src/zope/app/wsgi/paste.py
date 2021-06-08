@@ -24,6 +24,7 @@ from zope.app.wsgi._compat import PYTHON3
 if PYTHON3:
     basestring = (str, bytes)
 
+
 def asbool(obj):
     if isinstance(obj, basestring):
         obj = obj.lower()

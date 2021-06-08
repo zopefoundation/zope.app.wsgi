@@ -20,9 +20,10 @@ from zope.app.appsetup.testlayer import ZODBLayer
 from zope.app.wsgi import WSGIPublisherApplication
 from webtest import TestRequest
 
-from zope.app.wsgi._compat import httpclient, xmlrpcclient
+from zope.app.wsgi._compat import httpclient, xmlrpcclient, PYTHON2
 
 basicre = re.compile('Basic (.+)?:(.+)?$')
+
 
 def auth_header(header):
     """This function takes an authorization HTTP header and encode the
@@ -56,6 +57,7 @@ class TransactionMiddleware(object):
       after the test.
 
     """
+
     def __init__(self, root_factory, wsgi_stack):
         # ZODBLayer creates DB in testSetUp method, but the middleware is
         # set up already in the `setUp` method, so we have only the
@@ -121,15 +123,16 @@ class BrowserLayer(ZODBLayer):
                 self.getRootFolder,
                 self.setup_middleware(
                     setup_middleware(self._application)
-                    )
                 )
             )
+        )
 
     def tearDown(self):
         if self.allowTearDown:
             super(BrowserLayer, self).tearDown()
         else:
             raise NotImplementedError
+
 
 class NotInBrowserLayer(Exception):
     """The current test is not running in a layer inheriting from
@@ -184,7 +187,8 @@ class FakeResponse(object):
 
     def getOutput(self):
         status = self.response.status
-        status = status.encode('latin1') if not isinstance(status, bytes) else status
+        if not isinstance(status, bytes):
+            status = status.encode('latin1')
         parts = [self.server_protocol + b' ' + status]
 
         headers = [(k.encode('latin1') if not isinstance(k, bytes) else k,
@@ -200,8 +204,7 @@ class FakeResponse(object):
             parts += [b'', body]
         return b'\n'.join(parts)
 
-    if str is bytes: # Py2
-
+    if PYTHON2:  # pragma: PY2
         # Forcing __str__ through latin1, as Py3 does, will return
         # unicode which will then be decoded as ascii, which could
         # cause an UnicodeError.
@@ -253,7 +256,8 @@ class XMLRPCTestTransport(xmlrpcclient.Transport):
                 dict(extra_headers)["Authorization"],)
 
         request += "\n" + request_body
-        # XXX: http() needs to be passed a wsgi app!  where do we get a wsgi app?
+        # XXX: http() needs to be passed a wsgi app!  where do we get a wsgi
+        # app?
         response = http(request, handle_errors=self.handleErrors)
 
         errcode = response.getStatus()
@@ -267,7 +271,7 @@ class XMLRPCTestTransport(xmlrpcclient.Transport):
                 host + handler,
                 errcode, errmsg,
                 headers
-                )
+            )
 
         res = httpclient.HTTPResponse(FakeSocket(response.getBody()))
         res.begin()
@@ -284,4 +288,5 @@ def XMLRPCServerProxy(uri, transport=None, encoding=None,
         transport = XMLRPCTestTransport()
     if isinstance(transport, XMLRPCTestTransport):
         transport.handleErrors = handleErrors
-    return xmlrpcclient.ServerProxy(uri, transport, encoding, verbose, allow_none)
+    return xmlrpcclient.ServerProxy(
+        uri, transport, encoding, verbose, allow_none)

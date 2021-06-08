@@ -5,7 +5,7 @@
 4.3.1 (unreleased)
 ==================
 
-- Nothing changed yet.
+- Add support for Python 3.9.
 
 
 4.3.0 (2020-07-06)

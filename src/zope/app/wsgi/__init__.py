@@ -37,6 +37,7 @@ from zope.app.wsgi._compat import PYTHON2
 if not PYTHON2:
     basestring = (str, bytes)
 
+
 @implementer(interfaces.IWSGIApplication)
 class WSGIPublisherApplication(object):
     """A WSGI application implementation for the zope publisher
@@ -100,7 +101,7 @@ class PMDBWSGIPublisherApplication(WSGIPublisherApplication):
         try:
             app = super(PMDBWSGIPublisherApplication, self)
             return app.__call__(environ, start_response)
-        except Exception as error:
+        except Exception:
             import sys
             import pdb
             print("%s:" % sys.exc_info()[0])
@@ -153,7 +154,8 @@ def config(configfile, schemafile=None, features=()):
     # Insert the devmode feature, if turned on
     if options.devmode:
         features += ('devmode',)
-        logging.warning("Developer mode is enabled: this is a security risk "
+        logging.warning(
+            "Developer mode is enabled: this is a security risk "
             "and should NOT be enabled on production servers. Developer mode "
             "can usually be turned off by setting the `devmode` option to "
             "`off` or by removing it from the instance configuration file "

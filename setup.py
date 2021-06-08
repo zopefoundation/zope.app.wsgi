@@ -44,11 +44,16 @@ setup(
     name='zope.app.wsgi',
     version='4.3.1.dev0',
     url='https://github.com/zopefoundation/zope.app.wsgi',
+    project_urls={
+        'Issue Tracker': ('https://github.com/zopefoundation/'
+                          'zope.app.wsgi/issues'),
+        'Sources': 'https://github.com/zopefoundation/zope.app.wsgi',
+    },
     license='ZPL 2.1',
     description='WSGI application for the zope.publisher',
     long_description=read('README.rst') +
-        '\n\n' +
-        read('CHANGES.rst'),
+            '\n\n' +
+            read('CHANGES.rst'),
     author='Zope Foundation and Contributors',
     author_email='zope-dev@zope.org',
     classifiers=[
@@ -64,6 +69,7 @@ setup(
         'Programming Language :: Python :: 3.6',
         'Programming Language :: Python :: 3.7',
         'Programming Language :: Python :: 3.8',
+        'Programming Language :: Python :: 3.9',
         'Programming Language :: Python :: Implementation',
         'Programming Language :: Python :: Implementation :: CPython',
         'Programming Language :: Python :: Implementation :: PyPy',
@@ -79,6 +85,7 @@ setup(
         test=TESTS_REQUIRE,
         testlayer=['WebTest'],
     ),
+    python_requires='>=2.7,!=3.0.*,!=3.1.*,!=3.2.*,!=3.3.*,!=3.4.*',
     install_requires=[
         'setuptools',
         'ZConfig',
