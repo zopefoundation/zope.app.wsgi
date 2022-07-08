@@ -7,6 +7,11 @@
 
 - Add support for Python 3.9.
 
+- Remove unused dependencies on ``zope.configuration``, ``zope.error``,
+  ``zope.lifecycleevent``, ``zope.session``, ``zope.testing``, and unused
+  test dependencies on ``zope.annotation``, ``zope.login``, and
+  ``zope.password``.
+
 
 4.3.0 (2020-07-06)
 ==================
