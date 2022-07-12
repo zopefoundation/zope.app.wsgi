@@ -15,9 +15,10 @@
 """
 import tempfile
 
-from zope import interface, component
 import zope.publisher.interfaces.browser
 
+from zope import component
+from zope import interface
 from zope.app.wsgi.testlayer import BrowserLayer
 
 
