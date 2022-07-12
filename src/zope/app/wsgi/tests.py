@@ -17,17 +17,18 @@ import io
 import re
 import unittest
 
-from zope.app.wsgi.testing import SillyMiddleWare
-from zope.app.wsgi.testlayer import BrowserLayer
-from zope.authentication.interfaces import IUnauthenticatedPrincipal
-from zope.component.testlayer import ZCMLFileLayer
-from zope.publisher.interfaces.logginginfo import ILoggingInfo
-from zope.testing import renormalizing
-import zope.app.wsgi
 import zope.component
 import zope.component.testing
 import zope.event
 import zope.interface
+from zope.authentication.interfaces import IUnauthenticatedPrincipal
+from zope.component.testlayer import ZCMLFileLayer
+from zope.publisher.interfaces.logginginfo import ILoggingInfo
+from zope.testing import renormalizing
+
+import zope.app.wsgi
+from zope.app.wsgi.testing import SillyMiddleWare
+from zope.app.wsgi.testlayer import BrowserLayer
 
 
 def creating_app_w_paste_emits_ProcessStarting_event():

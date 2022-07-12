@@ -17,12 +17,14 @@ $Id$
 """
 import io
 import tempfile
-from zope import component, interface
-import zope.publisher.interfaces.http
+
 import zope.publisher.http
+import zope.publisher.interfaces.http
 from zope.publisher.interfaces.http import IResult
 from zope.security.proxy import removeSecurityProxy
 
+from zope import component
+from zope import interface
 from zope.app.wsgi._compat import FileType
 
 

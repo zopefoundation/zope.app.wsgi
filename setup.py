@@ -19,7 +19,10 @@
 """Setup for zope.app.wsgi package
 """
 import os
-from setuptools import setup, find_packages
+
+from setuptools import find_packages
+from setuptools import setup
+
 
 TESTS_REQUIRE = [
     'WebTest',
@@ -39,7 +42,7 @@ def read(*rnames):
 
 setup(
     name='zope.app.wsgi',
-    version='4.3.1.dev0',
+    version='4.4.0.dev0',
     url='https://github.com/zopefoundation/zope.app.wsgi',
     project_urls={
         'Issue Tracker': ('https://github.com/zopefoundation/'
@@ -67,6 +70,7 @@ setup(
         'Programming Language :: Python :: 3.7',
         'Programming Language :: Python :: 3.8',
         'Programming Language :: Python :: 3.9',
+        'Programming Language :: Python :: 3.10',
         'Programming Language :: Python :: Implementation',
         'Programming Language :: Python :: Implementation :: CPython',
         'Programming Language :: Python :: Implementation :: PyPy',

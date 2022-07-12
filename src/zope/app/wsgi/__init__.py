@@ -15,24 +15,23 @@
 """
 from __future__ import print_function
 
+import logging
 import os
 import sys
-import logging
+
 import ZConfig
-import zope.processlifetime
 import zope.app.appsetup.product
-
-from zope.event import notify
-from zope.interface import implementer
-from zope.publisher.publish import publish
-from zope.publisher.interfaces.logginginfo import ILoggingInfo
-
+import zope.processlifetime
 from zope.app.appsetup import appsetup
 from zope.app.publication.httpfactory import HTTPPublicationRequestFactory
+from zope.event import notify
+from zope.interface import implementer
+from zope.publisher.interfaces.logginginfo import ILoggingInfo
+from zope.publisher.publish import publish
+
 from zope.app.wsgi import interfaces
-
-
 from zope.app.wsgi._compat import PYTHON2
+
 
 if not PYTHON2:
     basestring = (str, bytes)
@@ -102,8 +101,8 @@ class PMDBWSGIPublisherApplication(WSGIPublisherApplication):
             app = super(PMDBWSGIPublisherApplication, self)
             return app.__call__(environ, start_response)
         except Exception:
-            import sys
             import pdb
+            import sys
             print("%s:" % sys.exc_info()[0])
             print(sys.exc_info()[1])
             try:

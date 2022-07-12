@@ -2,10 +2,10 @@
  CHANGES
 =========
 
-4.3.1 (unreleased)
+4.4.0 (unreleased)
 ==================
 
-- Add support for Python 3.9.
+- Add support for Python 3.9, 3.10.
 
 - Remove unused dependencies on ``zope.configuration``, ``zope.error``,
   ``zope.lifecycleevent``, ``zope.session``, ``zope.testing``, and unused

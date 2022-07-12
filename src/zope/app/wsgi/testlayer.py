@@ -11,16 +11,19 @@
 # FOR A PARTICULAR PURPOSE.
 #
 ##############################################################################
-from io import BytesIO
-
 import base64
 import re
-import transaction
-from zope.app.appsetup.testlayer import ZODBLayer
-from zope.app.wsgi import WSGIPublisherApplication
-from webtest import TestRequest
+from io import BytesIO
 
-from zope.app.wsgi._compat import httpclient, xmlrpcclient, PYTHON2
+import transaction
+from webtest import TestRequest
+from zope.app.appsetup.testlayer import ZODBLayer
+
+from zope.app.wsgi import WSGIPublisherApplication
+from zope.app.wsgi._compat import PYTHON2
+from zope.app.wsgi._compat import httpclient
+from zope.app.wsgi._compat import xmlrpcclient
+
 
 basicre = re.compile('Basic (.+)?:(.+)?$')
 
