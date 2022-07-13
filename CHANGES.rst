@@ -5,13 +5,13 @@
 4.5 (unreleased)
 ================
 
-- Nothing changed yet.
+- Add support for Python 3.10.
 
 
 4.4 (2022-07-13)
 ================
 
-- Add support for Python 3.9, 3.10.
+- Add support for Python 3.9.
 
 - Remove unused dependencies on ``zope.configuration``, ``zope.error``,
   ``zope.lifecycleevent``, ``zope.session``, ``zope.testing``, and unused
