@@ -42,7 +42,7 @@ def read(*rnames):
 
 setup(
     name='zope.app.wsgi',
-    version='4.4.dev0',
+    version='4.4',
     url='https://github.com/zopefoundation/zope.app.wsgi',
     project_urls={
         'Issue Tracker': ('https://github.com/zopefoundation/'
