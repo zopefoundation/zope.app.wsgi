@@ -60,7 +60,7 @@ class ErrorRaisingView(FileView):
         return 1 / 0
 
 
-class SillyMiddleWare(object):
+class SillyMiddleWare:
     def __init__(self, application):
         self.application = application
 

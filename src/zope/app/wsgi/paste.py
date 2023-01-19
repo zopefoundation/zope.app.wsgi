@@ -11,23 +11,15 @@
 # FOR A PARTICULAR PURPOSE.
 #
 ##############################################################################
-"""An application factory for Paste
-
-$Id$
-"""
+"""An application factory for Paste."""
 import zope.event
 import zope.processlifetime
 
 from zope.app.wsgi import getWSGIApplication
-from zope.app.wsgi._compat import PYTHON3
-
-
-if PYTHON3:
-    basestring = (str, bytes)
 
 
 def asbool(obj):
-    if isinstance(obj, basestring):
+    if isinstance(obj, (str, bytes)):
         obj = obj.lower()
         if obj in ('1', 'true', 'yes', 't', 'y'):
             return True

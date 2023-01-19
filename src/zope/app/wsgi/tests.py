@@ -99,7 +99,7 @@ class WSGIPublisherApplicationTests(unittest.TestCase):
             could_not_adapt_principal_to_logging_info)
 
     def tearDown(self):
-        super(WSGIPublisherApplicationTests, self).tearDown()
+        super().tearDown()
         gsm = zope.component.getGlobalSiteManager()
         assert gsm.unregisterAdapter(could_not_adapt_principal_to_logging_info)
 
@@ -149,18 +149,11 @@ class TestFakeResponse(unittest.TestCase):
 
     def test_doesnt_assume_encoding_of_headers(self):
         # https://github.com/zopefoundation/zope.app.wsgi/issues/7
-        # headers on Py2 should already be bytes or at least be allowed
-        # to be bytes. For BWC, we allow them to be bytes or unicode either
-        # platform.
+        # For BWC, we allow them to be bytes or str.
         # The body/__str__ can be decoded correctly too when this happens
         from zope.app.wsgi.testlayer import FakeResponse
 
-        try:
-            text_type = unicode
-        except NameError:
-            text_type = str
-
-        class MockResponse(object):
+        class MockResponse:
 
             status = '200 OK'
             body = ''
@@ -170,8 +163,8 @@ class TestFakeResponse(unittest.TestCase):
 
         response = MockResponse()
         # A latin-1 byte.
-        response.headerlist.append(("X-Header".encode('latin-1'),
-                                    u"voill\xe0".encode('latin-1')))
+        response.headerlist.append((b"X-Header",
+                                    b"voill\xe0"))
 
         fake = FakeResponse(response)
         self.assertEqual(
@@ -180,19 +173,19 @@ class TestFakeResponse(unittest.TestCase):
         # No matter the platform, str/bytes should not raise
         self.assertIn('HTTP', str(fake))
         self.assertIn(b'HTTP', bytes(fake))
-        self.assertEqual(text_type(fake),
-                         u'HTTP/1.0 200 OK\nX-Header: voill\xe0')
+        self.assertEqual(str(fake),
+                         'HTTP/1.0 200 OK\nX-Header: voill\xe0')
 
         # A utf-8 byte, smuggled inside latin-1, as discussed in PEP3333
         response.headerlist[0] = (
             b'X-Header',
-            u'p-o-p \U0001F4A9'.encode('utf-8').decode('latin-1'))
+            'p-o-p \U0001F4A9'.encode().decode('latin-1'))
         self.assertEqual(fake.getOutput(),
                          b'HTTP/1.0 200 OK\nX-Header: p-o-p \xf0\x9f\x92\xa9')
         self.assertIn('HTTP', str(fake))
         self.assertIn(b'HTTP', bytes(fake))
-        self.assertEqual(text_type(fake),
-                         u'HTTP/1.0 200 OK\nX-Header: p-o-p \xf0\x9f\x92\xa9')
+        self.assertEqual(str(fake),
+                         'HTTP/1.0 200 OK\nX-Header: p-o-p \xf0\x9f\x92\xa9')
 
 
 def test_suite():

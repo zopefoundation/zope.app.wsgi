@@ -11,10 +11,7 @@
 # FOR A PARTICULAR PURPOSE.
 #
 ##############################################################################
-"""IResult adapters for files.
-
-$Id$
-"""
+"""IResult adapters for files."""
 import io
 import tempfile
 
@@ -25,7 +22,6 @@ from zope.security.proxy import removeSecurityProxy
 
 from zope import component
 from zope import interface
-from zope.app.wsgi._compat import FileType
 
 
 @interface.implementer(IResult)
@@ -45,7 +41,7 @@ class FallbackWrapper:
                 break
 
 
-@component.adapter(FileType, zope.publisher.interfaces.http.IHTTPRequest)
+@component.adapter(io._io._IOBase, zope.publisher.interfaces.http.IHTTPRequest)
 @interface.implementer(zope.publisher.http.IResult)
 def FileResult(f, request):
     f = removeSecurityProxy(f)
@@ -70,7 +66,7 @@ def FileResult(f, request):
 _tfile = tempfile.TemporaryFile()
 _tfile.close()
 _tfile = _tfile.__class__
-if issubclass(_tfile, FileType):
+if issubclass(_tfile, io._io._IOBase):
     # need a fake one. Sigh
     class _tfile:
         pass
