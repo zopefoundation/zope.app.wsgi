@@ -13,7 +13,6 @@
 ##############################################################################
 """A WSGI Application wrapper for zope
 """
-from __future__ import print_function
 
 import logging
 import os
@@ -30,15 +29,10 @@ from zope.publisher.interfaces.logginginfo import ILoggingInfo
 from zope.publisher.publish import publish
 
 from zope.app.wsgi import interfaces
-from zope.app.wsgi._compat import PYTHON2
-
-
-if not PYTHON2:
-    basestring = (str, bytes)
 
 
 @implementer(interfaces.IWSGIApplication)
-class WSGIPublisherApplication(object):
+class WSGIPublisherApplication:
     """A WSGI application implementation for the zope publisher
 
     Instances of this class can be used as a WSGI application object.
@@ -71,9 +65,7 @@ class WSGIPublisherApplication(object):
         else:
             message = logging_info.getLogMessage()
 
-        if not PYTHON2:
-            # In python 3, convert message bytes to native string
-            message = message.decode('latin1')
+        message = message.decode('latin1')
 
         environ['wsgi.logging_info'] = message
         if 'REMOTE_USER' not in environ:
@@ -90,15 +82,14 @@ class PMDBWSGIPublisherApplication(WSGIPublisherApplication):
 
     def __init__(self, db=None, factory=HTTPPublicationRequestFactory,
                  handle_errors=False):
-        super(PMDBWSGIPublisherApplication, self).__init__(db, factory,
-                                                           handle_errors)
+        super().__init__(db, factory, handle_errors)
 
     def __call__(self, environ, start_response):
         environ['wsgi.handleErrors'] = self.handleErrors
 
         # Call the application to handle the request and write a response
         try:
-            app = super(PMDBWSGIPublisherApplication, self)
+            app = super()
             return app.__call__(environ, start_response)
         except Exception:
             import pdb
@@ -119,7 +110,7 @@ def config(configfile, schemafile=None, features=()):
             os.path.dirname(appsetup.__file__), 'schema', 'schema.xml')
 
     # Let's support both, an opened file and path
-    if isinstance(schemafile, basestring):
+    if isinstance(schemafile, (str, bytes)):
         schema = ZConfig.loadSchema(schemafile)
     else:
         schema = ZConfig.loadSchemaFile(schemafile)
@@ -127,7 +118,7 @@ def config(configfile, schemafile=None, features=()):
     # Load the configuration file
     # Let's support both, an opened file and path
     try:
-        if isinstance(configfile, basestring):
+        if isinstance(configfile, (str, bytes)):
             options, handlers = ZConfig.loadConfig(schema, configfile)
         else:
             options, handlers = ZConfig.loadConfigFile(schema, configfile)
