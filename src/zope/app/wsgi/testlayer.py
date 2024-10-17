@@ -39,7 +39,7 @@ def auth_header(header):
             u = ''
         if p is None:
             p = ''
-        plain = '{}:{}'.format(u, p)
+        plain = f'{u}:{p}'
         auth = base64.b64encode(plain.encode('utf-8'))
         return 'Basic %s' % str(auth.rstrip().decode('latin1'))
     return header
@@ -227,7 +227,7 @@ class XMLRPCTestTransport(xmlrpc.client.Transport):
     handleErrors = True
 
     def request(self, host, handler, request_body, verbose=0):
-        request = "POST {} HTTP/1.0\n".format(handler)
+        request = f"POST {handler} HTTP/1.0\n"
         request += "Content-Length: %i\n" % len(request_body)
         request += "Content-Type: text/xml\n"
 
