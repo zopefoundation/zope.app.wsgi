@@ -92,7 +92,7 @@ class PMDBWSGIPublisherApplication(WSGIPublisherApplication):
             app = super()
             return app.__call__(environ, start_response)
         except Exception:
-            import pdb
+            import pdb  # noqa: T100 import for pdb found
             import sys
             print("%s:" % sys.exc_info()[0])
             print(sys.exc_info()[1])
