@@ -9,6 +9,8 @@
 
 - Drop support for Python 3.7.
 
+- Improve support for ``multipart >= 1``.
+
 
 5.0 (2023-01-19)
 ================
