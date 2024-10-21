@@ -5,7 +5,7 @@
 5.2 (unreleased)
 ================
 
-- Nothing changed yet.
+- Improve support for ``multipart >= 1``.
 
 
 5.1 (2024-10-21)
@@ -14,8 +14,6 @@
 - Add support for Python 3.12, 3.13.
 
 - Drop support for Python 3.7.
-
-- Improve support for ``multipart >= 1``.
 
 
 5.0 (2023-01-19)
