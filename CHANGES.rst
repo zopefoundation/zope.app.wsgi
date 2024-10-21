@@ -2,7 +2,7 @@
  CHANGES
 =========
 
-5.2 (unreleased)
+5.2 (2024-10-21)
 ================
 
 - Improve support for ``multipart >= 1``.
