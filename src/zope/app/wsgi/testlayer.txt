@@ -77,15 +77,6 @@ It passes through the request protocol as the response protocol:
     Content-Type: text/html...
     ...Hello from the silly middleware...
 
-It allows to use `str` instead of `bytes` as query string:
-
-    >>> response = http(wsgi_app, 'GET /index.html HTTP/1.1')
-    >>> print(response)  #doctest: +ELLIPSIS
-    HTTP/1.1 200 Ok
-    Content-Type: text/html...
-    ...Hello from the silly middleware...
-
-
 Clean up:
 
     >>> import zope.publisher.interfaces.browser
