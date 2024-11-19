@@ -5,7 +5,7 @@
 5.3 (unreleased)
 ================
 
-- Nothing changed yet.
+- Revert changes from version 5.2 as they were too coarse.
 
 
 5.2 (2024-10-21)
