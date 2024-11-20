@@ -2,8 +2,8 @@
  CHANGES
 =========
 
-5.3 (unreleased)
-================
+5.2.1 (2024-11-20)
+==================
 
 - Revert changes from version 5.2 as they were too coarse.
 
