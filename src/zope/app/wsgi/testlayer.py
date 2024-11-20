@@ -200,12 +200,8 @@ class FakeResponse:
         return bytes(self).decode('latin-1')
 
 
-def http(wsgi_app, query_str, handle_errors=True):
-    if not isinstance(query_str, bytes):
-        query_str = query_str.encode("ascii")
-    # `multipart >= 1` insists on `\r\n` line endings:
-    query_str = b"\r\n".join(query_str.splitlines())
-    request = TestRequest.from_file(BytesIO(query_str.lstrip()))
+def http(wsgi_app, string, handle_errors=True):
+    request = TestRequest.from_file(BytesIO(string.lstrip()))
     request.environ['wsgi.handleErrors'] = handle_errors
     response = request.get_response(wsgi_app)
     return FakeResponse(response, request=request)
