@@ -14,10 +14,12 @@
 import base64
 import http.client as httpclient
 import re
+import typing
 import xmlrpc.client
 from io import BytesIO
 
 import transaction
+import webtest
 from webtest import TestRequest
 from zope.app.appsetup.testlayer import ZODBLayer
 
@@ -25,6 +27,7 @@ from zope.app.wsgi import WSGIPublisherApplication
 
 
 basicre = re.compile('Basic (.+)?:(.+)?$')
+_TEST_APP_FOR_ENCODING = webtest.TestApp(None)
 
 
 def auth_header(header):
@@ -198,6 +201,23 @@ class FakeResponse:
 
     def __str__(self):
         return bytes(self).decode('latin-1')
+
+
+def encodeMultipartFormdata(
+        fields: typing.List[typing.Tuple[str, str]],
+        files: typing.Optional[list] = None) -> typing.Tuple[bytes, bytes]:
+    """Encode fields and files to be used in a multipart/form-data request.
+
+    This function can be used in conjunction with `http()` (see below) to
+    prepare the body of a POST request.
+
+    Returns a tuple of content-type and content.
+    """
+    if files is None:
+        files = []
+    content_type, content = _TEST_APP_FOR_ENCODING.encode_multipart(
+        fields, files)
+    return content_type.encode(), content
 
 
 def http(wsgi_app, string, handle_errors=True):
