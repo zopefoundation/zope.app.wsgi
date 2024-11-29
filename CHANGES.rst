@@ -5,7 +5,8 @@
 5.3 (unreleased)
 ================
 
-- Nothing changed yet.
+- Add ``.testlayer.encodeMultipartFormdata()`` to correctly encode multipart
+  form data for use with the ``Content-Type: multipart/form-data`` header.
 
 
 5.2.1 (2024-11-20)
