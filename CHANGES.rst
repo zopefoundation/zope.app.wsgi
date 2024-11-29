@@ -2,7 +2,7 @@
  CHANGES
 =========
 
-5.3 (unreleased)
+5.3 (2024-11-29)
 ================
 
 - Add ``.testlayer.encodeMultipartFormdata()`` to correctly encode multipart
