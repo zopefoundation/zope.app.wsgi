@@ -98,3 +98,6 @@ You can suppress this behavior by setting the content length yourself:
 Note that you should really only use file returns for large results.
 Files use file descriptors which can be somewhat scarce resources on
 some systems.  Only use them when you need them.
+
+    >>> t.close()
+    >>> f.close()
