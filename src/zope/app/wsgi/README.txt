@@ -61,12 +61,12 @@ be just a little bit too much for this demonstration.
 Now that we have seen the manual way of initializing and using the publisher
 application, here is the way it is done using all of Zope 3's setup machinery::
 
-    from zope.app.server.main import setup, load_options
+    from zope.app.appsetup.debug import load_options, loadApplication
     from zope.app.wsgi import PublisherApp
 
     # Read all configuration files and bring up the component architecture
     args = ["-C/path/to/zope.conf"]
-    db = setup(load_options(args))
+    db = loadApplication(load_options(args))
 
     # Initialize the WSGI-compliant publisher application with the database
     wsgiApplication = PublisherApp(db)
