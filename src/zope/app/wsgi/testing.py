@@ -38,8 +38,8 @@ class FileView:
         fn = tempfile.mktemp()
         with open(fn, 'wb') as file:
             file.write(b"Hello\nWorld!\n")
-        file = open(fn, 'rb')
-        return file
+        with open(fn, 'rb') as file:
+            return file.read()
 
 
 class IndexView(FileView):
