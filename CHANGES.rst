@@ -5,7 +5,7 @@
 5.4 (unreleased)
 ================
 
-- Nothing changed yet.
+- Drop support for Python 3.8.
 
 
 5.3 (2024-11-29)
