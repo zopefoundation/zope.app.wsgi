@@ -14,7 +14,6 @@
 import base64
 import http.client as httpclient
 import re
-import typing
 import xmlrpc.client
 from io import BytesIO
 
