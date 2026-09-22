@@ -7,6 +7,78 @@ requires = [
 ]
 build-backend = "setuptools.build_meta"
 
+[project]
+name = "zope.app.wsgi"
+version = "6.1.dev0"
+description = "WSGI application for the zope.publisher"
+license = "ZPL-2.1"
+classifiers = [
+    "Development Status :: 5 - Production/Stable",
+    "Environment :: Web Environment",
+    "Intended Audience :: Developers",
+    "Programming Language :: Python",
+    "Programming Language :: Python :: 3",
+    "Programming Language :: Python :: 3.10",
+    "Programming Language :: Python :: 3.11",
+    "Programming Language :: Python :: 3.12",
+    "Programming Language :: Python :: 3.13",
+    "Programming Language :: Python :: 3.14",
+    "Programming Language :: Python :: Implementation",
+    "Programming Language :: Python :: Implementation :: CPython",
+    "Programming Language :: Python :: Implementation :: PyPy",
+    "Natural Language :: English",
+    "Operating System :: OS Independent",
+    "Topic :: Internet :: WWW/HTTP :: WSGI :: Application",
+    "Framework :: Zope :: 3",
+]
+dynamic = ["readme"]
+requires-python = ">=3.10"
+authors = [
+    {name = "Zope Foundation and contributors",email = "zope-dev@zope.dev"},
+]
+maintainers = [
+    {name = "Plone Foundation and contributors",email = "zope-dev@zope.dev"},
+]
+dependencies = [
+    "setuptools",
+    "ZConfig",
+    "legacy-cgi; python_version >= \"3.13\"",
+    "transaction",
+    "zope.app.appsetup >= 4",
+    "zope.processlifetime",
+    "zope.app.publication >= 4",
+    "zope.event",
+    "zope.interface",
+    "zope.publisher >= 4",
+    "zope.security >= 4",
+    "zope.component",
+    "zope.container >= 4",
+    "zope.site >= 4",
+    "zope.traversing >= 4",
+]
+
+[project.entry-points."paste.app_factory"]
+main = "zope.app.wsgi.paste:ZopeApplication"
+
+[project.optional-dependencies]
+test = [
+    "WebTest",
+    "zope.authentication",
+    "zope.browserpage",
+    "zope.principalregistry >= 4",
+    "zope.securitypolicy >= 4",
+    "zope.testing",
+    "zope.testrunner >= 6.4",
+]
+testlayer=[
+    "WebTest",
+]
+
+[project.urls]
+Source = "https://github.com/zopefoundation/zope.app.wsgi"
+Issues = "https://github.com/zopefoundation/zope.app.wsgi/issues"
+Changelog = "https://raw.githubusercontent.com/zopefoundation/zope.app.wsgi/master/CHANGES.rst"
+
 [tool.coverage.run]
 branch = true
 source = ["zope.app.wsgi"]
@@ -29,3 +101,6 @@ exclude_lines = [
 
 [tool.coverage.html]
 directory = "parts/htmlcov"
+
+[tool.setuptools.dynamic]
+readme = {file = ["README.rst", "CHANGES.rst"]}
