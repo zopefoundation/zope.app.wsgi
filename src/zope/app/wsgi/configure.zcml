@@ -5,4 +5,3 @@
    <adapter factory=".fileresult.TextIOWrapperFileResult" />
    <adapter factory=".fileresult.BufferedRandomFileResult" />
 </configure>
-

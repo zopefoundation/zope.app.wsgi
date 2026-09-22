@@ -14,7 +14,6 @@
 import base64
 import http.client as httpclient
 import re
-import typing
 import xmlrpc.client
 from io import BytesIO
 
@@ -205,7 +204,7 @@ class FakeResponse:
 
 def encodeMultipartFormdata(
         fields: list[tuple[str, str]],
-        files: typing.Optional[list] = None) -> tuple[bytes, bytes]:
+        files: list | None = None) -> tuple[bytes, bytes]:
     """Encode fields and files to be used in a multipart/form-data request.
 
     This function can be used in conjunction with `http()` (see below) to
