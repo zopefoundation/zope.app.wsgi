@@ -21,3 +21,6 @@ additional-rules = [
     "recursive-include src *.txt",
     "recursive-include src *.zcml",
     ]
+
+[pypi]
+trusted-publishing = true
