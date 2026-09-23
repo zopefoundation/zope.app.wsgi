@@ -40,7 +40,6 @@ maintainers = [
     {name = "Plone Foundation and contributors",email = "zope-dev@zope.dev"},
 ]
 dependencies = [
-    "setuptools",
     "ZConfig",
     "legacy-cgi; python_version >= \"3.13\"",
     "transaction",
