@@ -5,7 +5,12 @@
 6.2 (unreleased)
 ================
 
-- Nothing changed yet.
+- Fix ``XMLRPCTestTransport``/``XMLRPCServerProxy`` in
+  ``zope.app.wsgi.testlayer``: ``request()`` had no way to reach a WSGI
+  application and mixed ``str`` and ``bytes`` when building the request,
+  so every call through it raised a ``TypeError`` before a request could
+  even be dispatched (`#17
+  <https://github.com/zopefoundation/zope.app.wsgi/issues/17>`_).
 
 
 6.1 (2026-09-23)

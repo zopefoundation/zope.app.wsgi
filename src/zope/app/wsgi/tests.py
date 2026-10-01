@@ -16,6 +16,7 @@ import doctest
 import io
 import re
 import unittest
+import xmlrpc.client
 
 import zope.component
 import zope.component.testing
@@ -186,6 +187,45 @@ class TestFakeResponse(unittest.TestCase):
         self.assertIn(b'HTTP', bytes(fake))
         self.assertEqual(str(fake),
                          'HTTP/1.0 200 OK\nX-Header: p-o-p \xf0\x9f\x92\xa9')
+
+
+class XMLRPCTestTransportTests(unittest.TestCase):
+    """https://github.com/zopefoundation/zope.app.wsgi/issues/17
+
+    XMLRPCTestTransport.request() called the module-level http() helper
+    without a wsgi application to dispatch to, and tried to join the
+    (already byte-encoded) request body onto a plain str, so no call
+    through XMLRPCServerProxy could ever complete.
+    """
+
+    def _make_wsgi_app(self, status, body):
+        def wsgi_app(environ, start_response):
+            start_response(status, [('Content-Type', 'text/xml'),
+                                    ('Content-Length', str(len(body)))])
+            return [body]
+        return wsgi_app
+
+    def test_successful_call_roundtrips_through_wsgi_app(self):
+        from zope.app.wsgi.testlayer import XMLRPCServerProxy
+
+        body = xmlrpc.client.dumps((42,), methodresponse=True).encode()
+        wsgi_app = self._make_wsgi_app('200 OK', body)
+
+        proxy = XMLRPCServerProxy(
+            'http://localhost/xmlrpc', wsgi_app=wsgi_app)
+        self.assertEqual(proxy.answer(), 42)
+
+    def test_error_response_raises_protocol_error(self):
+        from zope.app.wsgi.testlayer import XMLRPCServerProxy
+
+        wsgi_app = self._make_wsgi_app(
+            '500 Internal Server Error', b'boom')
+
+        proxy = XMLRPCServerProxy(
+            'http://localhost/xmlrpc', wsgi_app=wsgi_app)
+        with self.assertRaises(xmlrpc.client.ProtocolError) as cm:
+            proxy.answer()
+        self.assertEqual(cm.exception.errcode, 500)
 
 
 def test_suite():

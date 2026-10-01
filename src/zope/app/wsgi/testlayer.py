@@ -240,10 +240,20 @@ class XMLRPCTestTransport(xmlrpc.client.Transport):
 
     It can be used like a normal transport, including support for basic
     authentication.
+
+    `wsgi_app` is the WSGI application the request is dispatched to; it can
+    be given here or set/overridden on the instance before it is used, and
+    `XMLRPCServerProxy` below also accepts it directly.
     """
 
     verbose = False
     handleErrors = True
+    wsgi_app = None
+
+    def __init__(self, wsgi_app=None, *args, **kw):
+        super().__init__(*args, **kw)
+        if wsgi_app is not None:
+            self.wsgi_app = wsgi_app
 
     def request(self, host, handler, request_body, verbose=0):
         request = f"POST {handler} HTTP/1.0\n"
@@ -255,10 +265,12 @@ class XMLRPCTestTransport(xmlrpc.client.Transport):
             request += "Authorization: {}\n".format(
                 dict(extra_headers)["Authorization"])
 
-        request += "\n" + request_body
-        # XXX: http() needs to be passed a wsgi app!  where do we get a wsgi
-        # app?
-        response = http(request, handle_errors=self.handleErrors)
+        # request_body is already bytes (xmlrpc.client encodes it before
+        # handing it to the transport), so the header portion has to be
+        # turned into bytes too before it can be joined with it.
+        request = request.encode('utf-8') + b"\n" + request_body
+        response = http(self.wsgi_app, request,
+                        handle_errors=self.handleErrors)
 
         errcode = response.getStatus()
         errmsg = response.getStatusString()
@@ -273,19 +285,25 @@ class XMLRPCTestTransport(xmlrpc.client.Transport):
                 headers
             )
 
-        res = httpclient.HTTPResponse(FakeSocket(response.getBody()))
+        # HTTPResponse.begin() parses a raw response off the socket,
+        # starting with the status line, so it needs the full response
+        # (status line + headers + body), not just the body.
+        res = httpclient.HTTPResponse(FakeSocket(response.getOutput()))
         res.begin()
         return self.parse_response(res)
 
 
 def XMLRPCServerProxy(uri, transport=None, encoding=None,
-                      verbose=0, allow_none=0, handleErrors=True):
+                      verbose=0, allow_none=0, handleErrors=True,
+                      wsgi_app=None):
     """A factory that creates a server proxy using the XMLRPCTestTransport
     by default.
 
+    `wsgi_app` is passed through to a freshly created `XMLRPCTestTransport`;
+    it is ignored if an existing `transport` is passed in instead.
     """
     if transport is None:
-        transport = XMLRPCTestTransport()
+        transport = XMLRPCTestTransport(wsgi_app)
     if isinstance(transport, XMLRPCTestTransport):
         transport.handleErrors = handleErrors
     return xmlrpc.client.ServerProxy(
